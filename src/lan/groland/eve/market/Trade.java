@@ -16,7 +16,7 @@ public class Trade {
 	}
 
 	public String toString(){
-		return item.getName() + "(" + item.getId() +") , " + quantitéJounalière + "," +buyPrice + ","+sellPrice + "," + (sellPrice - buyPrice) + "," + ((sellPrice/buyPrice)-1) + "," + euristic + "|" + volume();
+		return item.getName() + "(" + item.getId() +") , " + quantitéJounalière + "," +buyPrice + ","+sellPrice + "," + euristic + "," + item.getVolume();
 	}
 	
 	public double getMargeParTrader(){
