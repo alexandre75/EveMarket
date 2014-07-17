@@ -45,8 +45,8 @@ public class Main {
 	public static void main(String[] args) throws SQLException, IOException {
 		int station = AMARR_STATION;
 		int region = DOMAIN;
-		int cash = 20000000;
-		final int PLACE = 12;
+		double cash = 20e6;
+		final int PLACE = 13;
 		final int cargo = 9552;
 		
 		Set<Integer> alreadyBought = new HashSet<Integer>();
@@ -63,7 +63,7 @@ public class Main {
 	     //  is returned in a "ResultSet" object.
          String strSelect = "select eve_inv_types.type_id, eve_inv_types.name, eve_inv_types.jita_price_sell, sum((price_low - price_average)/(price_low-price_high)*items_history.quantity)/27.0 as quantJour, avg(items_history.price_high) as median, volume " +
          		"from eve_inv_types, items_history " +
-         		"where eve_inv_types.jita_price_sell <> 0 and eve_inv_types.jita_price_sell < "+(2*cash/(float)PLACE)+" and eve_inv_types.type_id = items_history.type_id and items_history.region_id = "+region+
+         		"where eve_inv_types.jita_price_sell <> 0 and eve_inv_types.jita_price_sell < "+(2*cash/(float)PLACE)+" and eve_inv_types.type_id = items_history.type_id and items_history.region_id = "+region+ //" and eve_inv_types.type_id = 33890 " +
          				" group by eve_inv_types.type_id ";
          //		+" having count(items_history.quantity) / 27.0 > 0.6; ";
          log.fine("The SQL query is: " + strSelect); // Echo For debugging
@@ -85,24 +85,26 @@ public class Main {
             log.fine(name + ", " + price + ", " + id);
                    
             if (volume > cargo) continue; // ne rentre pas dans le cargo
-            if (quantitéJounalière < 1) continue; // il faut au moins en vendre 1 par jour
             if (alreadyBought.contains(id)) continue;
             
             Sales sales = medianPrice(conn, id, region, price);
             
             double sellPrice = sales.price;
-            quantitéJounalière = sales.quantity;
+            quantitéJounalière = sales.quantity / 2.0;
             
-            double margeUnitaire = sellPrice * .975f /*taxe*/ -price;
+            if (quantitéJounalière < 1) continue; // il faut au moins en vendre 1 par jour
+            
             
             // On n'accepte pas les rentabilités historiques < 20%
-            if (margeUnitaire <= .20 * price) continue; 
-            
-            double marge = margeUnitaire * quantitéJounalière;
+            if (sellPrice * .975f /*taxe*/ -price <= .20 * price) continue; 
             
             OrderStats orders = OrdersStatsBuilder.build(id, station, region);
+            double prixDeVente = ((orders.getBid() < Float.MAX_VALUE)? orders.getBid() : sellPrice) * .975f;
+            double margeUnitaire =  prixDeVente * .975f /*taxe*/ -price;
+            double marge = margeUnitaire * quantitéJounalière;
+            
             double margeParTrader = marge / (orders.nbSellOrders() +1);
-            double prixDeVente = (orders.getBid() < Float.MAX_VALUE)? orders.getBid() : sellPrice;
+            
             if (prixDeVente/price < 1.20f) continue; // pas de rentabilité < 20% sinon on pourrait être en perte
             Trade trade = new Trade(new Item(id, name, volume), margeParTrader, quantitéJounalière, prixDeVente, price);
             if (trade.ajust(2*cash/(float)PLACE)){
@@ -122,24 +124,32 @@ public class Main {
         stmt2.setInt(2, regionId);
         ResultSet rset2 = stmt2.executeQuery();
         List<Double> prices = new ArrayList<Double>();
+        List<Long> quantities = new ArrayList<>();
         int quantity = 0;
         while (rset2.next()){
         	double priceHigh = rset2.getDouble("price_high");
             double priceLow = rset2.getDouble("price_low");
             double priceAverage = rset2.getDouble("price_average");
-            double qty = rset2.getDouble("quantity");
+            long qty = rset2.getLong("quantity");
         	if (priceLow >= jitaPrice){
         		prices.add(priceAverage);
-        		quantity += qty;
+        		quantities.add(qty);
         	} else if (priceHigh >= jitaPrice){
         		prices.add(priceHigh);
-        		quantity += (priceLow - priceAverage)/(priceLow - priceHigh)*qty;
+        		quantities.add(Math.round((priceLow - priceAverage)/(priceLow - priceHigh)*qty));
         	}
         }
+        
+        /* 0 trades for days where records are missing */
+        for (int i = quantities.size(); i < 27 ; i++){
+        	quantities.add(0l);
+        }
+        Collections.sort(quantities);
+        
         rset2.close();
         Collections.sort(prices);
         Sales res = new Sales();
-        res.quantity = quantity / 27.0;
+        res.quantity = quantities.get(quantities.size()/2);
         if (prices.size() > 0){
         	res.price = prices.get(prices.size()/2);
         }
