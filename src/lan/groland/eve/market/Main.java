@@ -45,8 +45,8 @@ public class Main {
 	public static void main(String[] args) throws SQLException, IOException {
 		int station = AMARR_STATION;
 		int region = DOMAIN;
-		double cash = 20e6;
-		final int PLACE = 13;
+		double cash = 80e6;
+		final int PLACE = 18;
 		final int cargo = 9552;
 		
 		Set<Integer> alreadyBought = new HashSet<Integer>();
@@ -61,10 +61,10 @@ public class Main {
 		 Connection conn = DriverManager.getConnection(
 	               "jdbc:mysql://192.168.1.133:3306/eve", "alex", "chHfn8Zc");
 	     //  is returned in a "ResultSet" object.
-         String strSelect = "select eve_inv_types.type_id, eve_inv_types.name, eve_inv_types.jita_price_sell, sum((price_low - price_average)/(price_low-price_high)*items_history.quantity)/27.0 as quantJour, avg(items_history.price_high) as median, volume " +
-         		"from eve_inv_types, items_history " +
-         		"where eve_inv_types.jita_price_sell <> 0 and eve_inv_types.jita_price_sell < "+(2*cash/(float)PLACE)+" and eve_inv_types.type_id = items_history.type_id and items_history.region_id = "+region+ //" and eve_inv_types.type_id = 33890 " +
-         				" group by eve_inv_types.type_id ";
+         String strSelect = "select eve_inv_types.type_id, eve_inv_types.name, eve_inv_types.jita_price_sell, volume " +
+         		"from eve_inv_types " +
+         		"where eve_inv_types.jita_price_sell <> 0 and eve_inv_types.jita_price_sell < "+(cash/(float)PLACE)//+" and eve_inv_types.type_id = 22553 "
+         				;
          //		+" having count(items_history.quantity) / 27.0 > 0.6; ";
          log.fine("The SQL query is: " + strSelect); // Echo For debugging
          System.out.println(strSelect);
@@ -80,7 +80,6 @@ public class Main {
             String name = rset.getString("name");
             double price = rset.getDouble("jita_price_sell");
             int    id   = rset.getInt("type_id");
-            double quantitéJounalière = rset.getDouble("quantJour");
             double volume = rset.getDouble("volume");
             log.fine(name + ", " + price + ", " + id);
                    
@@ -90,7 +89,7 @@ public class Main {
             Sales sales = medianPrice(conn, id, region, price);
             
             double sellPrice = sales.price;
-            quantitéJounalière = sales.quantity / 2.0;
+            double quantitéJounalière = sales.quantity / 2.0;
             
             if (quantitéJounalière < 1) continue; // il faut au moins en vendre 1 par jour
             
@@ -125,7 +124,7 @@ public class Main {
         ResultSet rset2 = stmt2.executeQuery();
         List<Double> prices = new ArrayList<Double>();
         List<Long> quantities = new ArrayList<>();
-        int quantity = 0;
+       
         while (rset2.next()){
         	double priceHigh = rset2.getDouble("price_high");
             double priceLow = rset2.getDouble("price_low");
