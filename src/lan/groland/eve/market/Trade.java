@@ -19,7 +19,7 @@ public class Trade {
 		return item.getName() + "(" + item.getId() +") , " + quantitéJounalière + "," +buyPrice + ","+sellPrice + "," + euristic + "," + item.getVolume();
 	}
 	
-	public double getMargeParTrader(){
+	public double getBenefParJour(){
 		return euristic;
 	}
 	

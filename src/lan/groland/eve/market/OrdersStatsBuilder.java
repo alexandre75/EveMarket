@@ -64,6 +64,8 @@ class Handler extends DefaultHandler {
 	final private int stationId;
 	private boolean limitedToStation;
 	private int lastStation;
+	private float price;
+	private List<Float> priceStation = new ArrayList<Float>();
 	
 	public Handler(int station, boolean station2) {
 		this.stationId = station;
@@ -99,16 +101,17 @@ class Handler extends DefaultHandler {
 			inSell = false;
 		} 
 		if (inSell && "price".equals(qName)){
-			float price = Float.parseFloat(chars.toString());
+			price = Float.parseFloat(chars.toString());
 			if (!limitedToStation || lastStation == stationId){
 				prices.add(price);
 			}
+			if (lastStation == stationId){
+				priceStation.add(price);
+			}
 		}
+
 		if ("station".equals(qName)){
 			lastStation = Integer.parseInt(chars.toString());
-			if (inSell && lastStation == stationId){
-				nbTraders ++;
-			}
 		}
 	}
 
@@ -124,18 +127,23 @@ class Handler extends DefaultHandler {
 	public void endDocument() throws SAXException {
 		if (prices.isEmpty()){
 			bid = Float.MAX_VALUE;
-			nbTraders = 0;
 		} else {
 			bid = Collections.min(prices);
-			final float treshold = bid * 1.05f;
+		}
+		
+		nbTraders = 0;
+		if (!priceStation.isEmpty()){
+			/* compute active traders */
+			float lowStation = Collections.min(priceStation);;
+			final float treshold = lowStation * 1.1f;
 			nbTraders = 0;
-			for (float p : prices){
+			for (float p : priceStation){
 				if (p < treshold){
 					nbTraders++;
 				}
 			}
 		}
 	}
-	
+
 	
 }

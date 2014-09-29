@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * List des meilleurs trades
@@ -25,14 +26,18 @@ public class BestTrades {
 	private static NumberFormat intFormat = NumberFormat.getIntegerInstance();
 	
 	public void add(Trade trade) {
-		if (trade.getMargeParTrader() <= min && trades.size() >= size) return;
+		if (trade.getBenefParJour() <= min && trades.size() >= size) return;
 		
 		if (trades.size() >= size){
 			Trade t = Collections.min(trades, TradeComparator.instance());
 			System.out.println("Suppression Trade pas rentable : " + t);
 			trades.remove(t);
 			capacity += t.volume();
-			min = Collections.min(trades, TradeComparator.instance()).getMargeParTrader();
+			try {
+				min = Collections.min(trades, TradeComparator.instance()).getBenefParJour();
+			} catch(NoSuchElementException e){
+				min = Double.MAX_VALUE;
+			}
 			System.out.println("Capacity : " + capacity);
 		}
 		if (capacity < trade.volume()){
@@ -40,7 +45,7 @@ public class BestTrades {
 			Collections.sort(tmp, new Comparator<Trade>(){
 				@Override
 				public int compare(Trade arg0, Trade arg1) {
-					return (int)(arg0.getMargeParTrader()/arg0.volume() - arg1.getMargeParTrader()/arg1.volume());
+					return (int)(arg0.getBenefParJour()/arg0.volume() - arg1.getBenefParJour()/arg1.volume());
 				}
 			});
 			double volumeLibere = 0;
@@ -49,12 +54,12 @@ public class BestTrades {
 			for (Trade t : tmp){
 				volumeLibere += t.volume();
 				npItemsAEnlever++;
-				perte += t.getMargeParTrader();
+				perte += t.getBenefParJour();
 				if (volumeLibere + capacity >= trade.volume()){
 					break;
 				}
 			}
-			if (npItemsAEnlever == tmp.size() || perte > trade.getMargeParTrader()){
+			if (npItemsAEnlever == tmp.size() || perte > trade.getBenefParJour()){
 				return;
 			}
 			for (int i = 0; i < npItemsAEnlever; i++){
@@ -63,13 +68,17 @@ public class BestTrades {
 				capacity += tmp.get(i).volume();
 				System.out.println("Capacity : " + capacity);
 			}
-			min = Collections.min(trades, TradeComparator.instance()).getMargeParTrader();
+			min = Collections.min(trades, TradeComparator.instance()).getBenefParJour();
 		}
-		System.out.println("ajout : " + trade);
-		trades.add(trade);
-		min = Math.min(min, trade.getMargeParTrader());
-		capacity -= trade.volume();
+		addTrade(trade);
 		System.out.println("Capacity : " + capacity);
+	}
+	
+	protected void addTrade(Trade t){
+		System.out.println("ajout : " + t);
+		trades.add(t);
+		min = Math.min(min, t.getBenefParJour());
+		capacity -= t.volume();
 	}
 
 	public String toString(){
@@ -78,7 +87,7 @@ public class BestTrades {
 		StringBuilder b = new StringBuilder("=============================================\n");
 		for (Trade t : trades){
 			b.append(t + "\n");
-			benef+= t.benefice();
+			benef+= t.getBenefParJour();
 		}
 		b.append("Benefice potentiel :" + intFormat.format(benef));
 		return b.toString();
@@ -90,7 +99,7 @@ class TradeComparator implements Comparator<Trade> {
 	
 	@Override
 	public int compare(Trade arg0, Trade arg1) {
-		return Math.round((float)(arg0.getMargeParTrader() - arg1.getMargeParTrader()));
+		return Math.round((float)(arg0.getBenefParJour() - arg1.getBenefParJour()));
 	}
 
 	public static TradeComparator instance() {
