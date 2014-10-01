@@ -41,7 +41,7 @@ public class OrdersStatsBuilder {
 			xmlReader.setContentHandler(handler);
 			InputSource source = new InputSource(conn.getInputStream());
 			xmlReader.parse(source);
-			OrderStats res = new OrderStats(handler.getNbTraders(), handler.getBid());
+			OrderStats res = new OrderStats(handler.getNbTraders(), handler.getBid(), handler.getNbAsks(), handler.getAsk());
 			return res;
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("", e);
@@ -64,9 +64,21 @@ class Handler extends DefaultHandler {
 	final private int stationId;
 	private boolean limitedToStation;
 	private int lastStation;
-	private float price;
 	private List<Float> priceStation = new ArrayList<Float>();
+	private boolean inBuy;
+	private List<Float> asks = new ArrayList<Float>();
+	private List<Float> asksStation = new ArrayList<Float>();
+	private float ask = Float.MIN_VALUE;
+	private int nbAsks;
 	
+	public int getNbAsks(){
+		return nbAsks;
+	}
+	
+	public float getAsk() {
+		return ask;
+	}
+
 	public Handler(int station, boolean station2) {
 		this.stationId = station;
 		this.limitedToStation = station2;
@@ -86,7 +98,10 @@ class Handler extends DefaultHandler {
 		if ("sell_orders".equals(qName)){
 			inSell  = true;
 		}
-		if (inSell && "price".equals(qName)){
+		if ("buy_orders".equals(qName)){
+			inBuy  = true;
+		}
+		if ((inSell||inBuy) && "price".equals(qName)){
 			chars = new StringBuffer();
 		}
 		if ("station".equals(qName)){
@@ -100,13 +115,25 @@ class Handler extends DefaultHandler {
 		if ("sell_orders".equals(qName)){
 			inSell = false;
 		} 
+		if ("buy_orders".equals(qName)){
+			inBuy = false;
+		} 
 		if (inSell && "price".equals(qName)){
-			price = Float.parseFloat(chars.toString());
+			float price = Float.parseFloat(chars.toString());
 			if (!limitedToStation || lastStation == stationId){
 				prices.add(price);
 			}
 			if (lastStation == stationId){
 				priceStation.add(price);
+			}
+		}
+		if (inBuy && "price".equals(qName)){
+			float price = Float.parseFloat(chars.toString());
+			if (!limitedToStation || lastStation == stationId){
+				asks.add(price);
+			}
+			if (lastStation == stationId){
+				asksStation.add(price);
 			}
 		}
 
@@ -130,6 +157,11 @@ class Handler extends DefaultHandler {
 		} else {
 			bid = Collections.min(prices);
 		}
+		if (asks.isEmpty()){
+			ask  = Float.MIN_VALUE;
+		} else {
+			ask = Collections.max(asks);
+		}
 		
 		nbTraders = 0;
 		if (!priceStation.isEmpty()){
@@ -140,6 +172,19 @@ class Handler extends DefaultHandler {
 			for (float p : priceStation){
 				if (p < treshold){
 					nbTraders++;
+				}
+			}
+		}
+		
+		nbAsks = 0;
+		if (!asksStation.isEmpty()){
+			/* compute active traders */
+			float highStation = Collections.max(asksStation);;
+			final float treshold = highStation * .9f;
+			nbAsks = 0;
+			for (float p : asksStation){
+				if (p > treshold){
+					nbAsks++;
 				}
 			}
 		}
