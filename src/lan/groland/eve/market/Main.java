@@ -49,11 +49,11 @@ public class Main {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws SQLException, IOException {
-		int station = AMARR_STATION;
-		int region = DOMAIN;
-		double cash = 5000e6;
-		final int PLACE = 103;
-		final int cargo = 500000;
+		int station = BRAVELAND_STATION;
+		int region = CATCH;
+		double cash = 1700e6;
+		final int PLACE = 25;
+		final int cargo = 12000;
 		
 		Set<Integer> alreadyBought = new HashSet<Integer>();
 		try (BufferedReader reader = new BufferedReader(new FileReader("orders"))){
@@ -69,7 +69,7 @@ public class Main {
 	     //  is returned in a "ResultSet" object.
          String strSelect = "select eve_inv_types.type_id, eve_inv_types.name, eve_inv_types.jita_price_sell, volume " +
          		"from eve_inv_types " +
-         		"where eve_inv_types.jita_price_sell <> 0 and eve_inv_types.jita_price_sell < "+(cash*2/(float)PLACE)//+" and eve_inv_types.type_id = 22553 "
+         		"where eve_inv_types.jita_price_sell <> 0 and eve_inv_types.jita_price_sell < "+(cash/(float)30)//+" and eve_inv_types.type_id = 22553 "
          				;
          //		+" having count(items_history.quantity) / 27.0 > 0.6; ";
          log.fine("The SQL query is: " + strSelect); // Echo For debugging
@@ -108,16 +108,17 @@ public class Main {
             // Si pas de concurence, on tente la culbute
             double prixDeVente = ((orders.getBid() < Float.MAX_VALUE)? orders.getBid() : buyPrice*1.5);
             prixDeVente = Math.min(1.5*sellPrice, prixDeVente); // on ne vendra probablement pas à n'importe quel prix
-            double margeUnitaire =  prixDeVente * .979f /*taxe*/ -buyPrice;
+            double margeUnitaire =  prixDeVente * .983f /*taxe*/ -buyPrice;
            
             if (prixDeVente/buyPrice < 1.20f) continue; // pas de rentabilité < 20% sinon on pourrait être en perte
       
             double quantiteAAcheter = Math.ceil(quantitéJounalière/(double)(orders.nbSellOrders() +1));
-            if (orders.nbSellOrders() <= 1) quantiteAAcheter *= 2;
+            //if (orders.nbSellOrders() <= 1) quantiteAAcheter *= 2;
            
 			double margeProbable = Math.min(quantitéJounalière/(double)(orders.nbSellOrders() +1), quantiteAAcheter)*margeUnitaire;
 			Trade trade = new Trade(new Item(id, name, volume), margeProbable, quantiteAAcheter, prixDeVente, buyPrice);
-            if (trade.ajust(cash*2/(float)PLACE)){
+            if (margeProbable < 1e6) continue; // on ne se baisse plus pour 3 fois rien
+			if (trade.ajust(cash/30f)){
             	// System.out.println(name + "\t : " + cash.format(margeParTrader) + "\t" + volume);
             	trades.add(trade);
             }
@@ -164,7 +165,7 @@ public class Main {
         rset2.close();
         Collections.sort(prices);
         Sales res = new Sales();
-        res.quantity = quantities.get(quantities.size()/2);
+        res.quantity = quantities.get(quantities.size()/2)*2;
         if (prices.size() > 0){
         	res.price = prices.get(prices.size()/2);
         }

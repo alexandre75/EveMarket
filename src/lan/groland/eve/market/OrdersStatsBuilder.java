@@ -41,7 +41,7 @@ public class OrdersStatsBuilder {
 			xmlReader.setContentHandler(handler);
 			InputSource source = new InputSource(conn.getInputStream());
 			xmlReader.parse(source);
-			OrderStats res = new OrderStats(handler.getNbTraders(), handler.getBid(), handler.getNbAsks(), handler.getAsk());
+			OrderStats res = new OrderStats(handler.getNbActiveTrafers(), handler.getBid(), handler.getNbAsks(), handler.getAsk());
 			return res;
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("", e);
@@ -88,8 +88,9 @@ class Handler extends DefaultHandler {
 		return bid;
 	}
 
-	public int getNbTraders() {
-		return nbTraders;
+	public int getNbActiveTrafers() {
+		return priceStation.size() *3/4;
+		//return nbTraders;
 	}
 
 	@Override
