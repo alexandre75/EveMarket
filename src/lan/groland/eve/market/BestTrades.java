@@ -83,13 +83,23 @@ public class BestTrades {
 
 	public String toString(){
 		Collections.sort(trades, new TradeComparator());
-		float benef = 0;
+		float benef = 0, invest = 0;
 		StringBuilder b = new StringBuilder("=============================================\n");
 		for (Trade t : trades){
 			b.append(t + "\n");
 			benef+= t.getBenefParJour();
+			invest += t.capital();
 		}
-		b.append("Benefice potentiel :" + intFormat.format(benef));
+		b.append("Benefice potentiel :" + intFormat.format(benef) + " / " + intFormat.format(invest) + ": " +NumberFormat.getPercentInstance().format(benef/invest)) ;
+		return b.toString();
+	}
+	
+	public String multiBuyString(){
+		Collections.sort(trades, new TradeComparator());
+		StringBuilder b = new StringBuilder("=============================================\n");
+		for (Trade t : trades){
+			b.append(t.multiBuyString() + "\n");
+		}
 		return b.toString();
 	}
 }

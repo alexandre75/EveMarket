@@ -1,6 +1,14 @@
 package lan.groland.eve.market;
 
+import java.text.NumberFormat;
+
 public class Trade {
+	private static final NumberFormat INTEGER_INSTANCE = NumberFormat.getIntegerInstance();
+	{
+		INTEGER_INSTANCE.setGroupingUsed(false);
+	}
+	
+	private static final NumberFormat numberFormat = NumberFormat.getInstance();
 	private double euristic;
 	private double quantitéJounalière;
 	private double sellPrice;
@@ -17,6 +25,11 @@ public class Trade {
 
 	public String toString(){
 		return item.getName() + "(" + item.getId() +") , " + quantitéJounalière + "," +buyPrice + ","+sellPrice + "," + euristic + "," + item.getVolume();
+		
+	}
+	
+	public String multiBuyString(){
+		return item.getName() + " x"+ INTEGER_INSTANCE.format(quantitéJounalière);
 	}
 	
 	public double getBenefParJour(){
