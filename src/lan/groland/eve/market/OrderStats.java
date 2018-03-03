@@ -3,6 +3,12 @@ package lan.groland.eve.market;
 public class OrderStats {
 	private int nbTraders;
 	private float bid;
+	
+	
+	/**
+	 * Number of <b>active</b> traders (buy orders).
+	 * @return
+	 */
 	public int getNbAsks() {
 		return nbAsks;
 	}
@@ -25,6 +31,10 @@ public class OrderStats {
 		return bid;
 	}
 
+	/**
+	 * Number of <b>active</b> traders (sell orders).
+	 * @return
+	 */
 	public int nbSellOrders() {
 		return nbTraders;
 	}

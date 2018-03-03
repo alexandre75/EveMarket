@@ -1,13 +1,22 @@
 package lan.groland.eve.market;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.stream.JsonParser;
+import javax.json.stream.JsonParser.Event;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -20,20 +29,19 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class OrdersStatsBuilder {
 
-	 private static SAXParserFactory spf = SAXParserFactory.newInstance();
-	 {
-	    spf.setNamespaceAware(true);
-	 }
-	 
-	
-	public static OrderStats build(int id, int stationId, int regionlimit) throws IOException {
-		return build(id, stationId, regionlimit, false);
+	private static SAXParserFactory spf = SAXParserFactory.newInstance();
+	{
+		spf.setNamespaceAware(true);
 	}
 
 
-	public static OrderStats build(int id, int stationId, int regionlimit, boolean station) throws IOException {
+	public static OrderStats build(int id, long[] stations, int regionlimit) throws IOException {
+		return build(id, stations, regionlimit, false);
+	}
+
+	public static OrderStats oldbuild(int id, int stationId, int regionlimit, boolean station) throws IOException {
+		URL url = new URL("http://api.eve-central.com/api/quicklook?typeid="+id+"&regionlimit="+regionlimit);
 		try {
-			URL url = new URL("http://api.eve-central.com/api/quicklook?typeid="+id+"&regionlimit="+regionlimit);
 			URLConnection conn = url.openConnection();
 			SAXParser saxParser = spf.newSAXParser();
 			XMLReader xmlReader = saxParser.getXMLReader();
@@ -43,6 +51,9 @@ public class OrdersStatsBuilder {
 			xmlReader.parse(source);
 			OrderStats res = new OrderStats(handler.getNbActiveTrafers(), handler.getBid(), handler.getNbAsks(), handler.getAsk());
 			return res;
+		} catch(NumberFormatException e){
+			System.out.println(url);
+			throw e;
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("", e);
 		} catch (ParserConfigurationException e) {
@@ -52,6 +63,164 @@ public class OrdersStatsBuilder {
 		}
 	}
 
+	enum State {
+		START,READING,LOCATION,TYPE
+	}
+
+	public static OrderStats build(int id, long[] stationId, int regionlimit, boolean stationIn) throws IOException {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, -2);
+		Date yesterday = calendar.getTime();
+		
+		float lowerSell = Float.MAX_VALUE;
+		float higherBuy = 0;
+		int nbActiveSells = 0, nbActiveBuys = 0; 
+
+		URL url = new URL("https://crest-tq.eveonline.com/market/"+regionlimit+"/orders/buy/?type=https://crest-tq.eveonline.com/inventory/types/"+id+"/");
+		//System.out.println(url.toString());
+		State state = State.START;
+		{
+			try (InputStream is = url.openStream();JsonParser jsp = Json.createParser(is)){
+				boolean buy = false;
+				float price = 0;
+				long station = 0;
+				while (jsp.hasNext()){
+					Event e = jsp.next();
+					if (state == State.START && e == Event.KEY_NAME && jsp.getString().equals("buy")){
+						if (jsp.next() == Event.VALUE_FALSE){
+							buy = false;
+						} else {
+							buy = true;
+						}
+						state = State.READING;
+						continue;
+					}
+					if (state == State.READING && e == Event.KEY_NAME && jsp.getString().equals("price")){
+						jsp.next();
+						price = jsp.getBigDecimal().floatValue();
+						continue;
+					}
+					if (state == State.READING && e == Event.KEY_NAME && jsp.getString().equals("location")){
+						state = State.LOCATION;
+						continue;
+					}
+					if (state == State.LOCATION && e == Event.KEY_NAME && jsp.getString().equals("id")){
+						jsp.next();
+						station = jsp.getLong();
+						continue;
+					}
+					if (state == State.LOCATION && e == Event.END_OBJECT){
+						state = State.READING;
+						continue;
+					}
+					if (state == State.READING && e == Event.KEY_NAME && jsp.getString().equals("type")){
+						state = State.TYPE;
+						continue;
+					}
+					if (state == State.TYPE && e == Event.END_OBJECT){
+						state = State.READING;
+						continue;
+					}
+					if (state == State.READING && e == Event.END_OBJECT){
+						if (!stationIn || Arrays.binarySearch(stationId, station)>=0){
+							if (buy){
+								higherBuy = Math.max(higherBuy, price);
+								nbActiveBuys++;
+							} else {
+								lowerSell = Math.min(lowerSell, price);
+								nbActiveSells++;
+							}
+						}
+					}
+				}
+		//		System.out.println(higherBuy + "\t" + nbActiveBuys);
+			}
+		}
+		url = new URL("https://crest-tq.eveonline.com/market/"+regionlimit+"/orders/sell/?type=https://crest-tq.eveonline.com/inventory/types/"+id+"/");
+	//	System.out.println(url.toString());
+		state = State.START;
+
+
+		try (InputStream is = url.openStream();JsonParser jsp = Json.createParser(is)){
+			boolean buy = false;
+			float price = 0;
+			long station = 0;
+			Date date = null;
+			while (jsp.hasNext()){
+				Event e = jsp.next();
+				if (state == State.START && e == Event.KEY_NAME && jsp.getString().equals("buy")){
+					if (jsp.next() == Event.VALUE_FALSE){
+						buy = false;
+					} else {
+						buy = true;
+					}
+					state = State.READING;
+					continue;
+				}
+				if (state == State.READING && e == Event.KEY_NAME && jsp.getString().equals("price")){
+					jsp.next();
+					price = jsp.getBigDecimal().floatValue();
+					continue;
+				}
+				if (state == State.READING && e == Event.KEY_NAME && jsp.getString().equals("issued")){
+					jsp.next();
+					try {
+						date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(jsp.getString());
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					continue;
+				}
+				if (state == State.READING && e == Event.KEY_NAME && jsp.getString().equals("location")){
+					state = State.LOCATION;
+					continue;
+				}
+				if (state == State.LOCATION && e == Event.KEY_NAME && jsp.getString().equals("id")){
+					jsp.next();
+					station = jsp.getLong();
+					continue;
+				}
+				if (state == State.LOCATION && e == Event.END_OBJECT){
+					state = State.READING;
+					continue;
+				}
+				if (state == State.READING && e == Event.KEY_NAME && jsp.getString().equals("type")){
+					state = State.TYPE;
+					continue;
+				}
+				if (state == State.TYPE && e == Event.END_OBJECT){
+					state = State.READING;
+					continue;
+				}
+				if (state == State.READING && e == Event.END_OBJECT){
+					if (!stationIn || Arrays.binarySearch(stationId, station)>=0){
+						if (buy){
+							higherBuy = Math.max(higherBuy, price);
+							nbActiveBuys++;
+						} else {
+							lowerSell = Math.min(lowerSell, price);
+							if (date.after(yesterday)){
+								nbActiveSells++;
+							}
+						}
+					}
+				}
+			}
+			//System.out.println(lowerSell + "\t" + nbActiveSells);
+		}
+
+		return new OrderStats(nbActiveSells,lowerSell, nbActiveBuys, higherBuy);
+	}
+
+	public static void main(String[] args){
+		try {
+			OrderStats o = build(14343, new long[]{60004588}, 10000030, true);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
 
 class Handler extends DefaultHandler {
@@ -59,22 +228,22 @@ class Handler extends DefaultHandler {
 	private boolean inSell = false;
 	private StringBuffer chars;
 	private float bid = Float.MAX_VALUE;
-	
+
 	private List<Float> prices = new ArrayList<Float>();
 	final private int stationId;
 	private boolean limitedToStation;
-	private int lastStation;
+	private long lastStation;
 	private List<Float> priceStation = new ArrayList<Float>();
 	private boolean inBuy;
 	private List<Float> asks = new ArrayList<Float>();
 	private List<Float> asksStation = new ArrayList<Float>();
 	private float ask = Float.MIN_VALUE;
 	private int nbAsks;
-	
+
 	public int getNbAsks(){
 		return nbAsks;
 	}
-	
+
 	public float getAsk() {
 		return ask;
 	}
@@ -139,7 +308,7 @@ class Handler extends DefaultHandler {
 		}
 
 		if ("station".equals(qName)){
-			lastStation = Integer.parseInt(chars.toString());
+			lastStation = Long.parseLong(chars.toString());
 		}
 	}
 
@@ -163,7 +332,7 @@ class Handler extends DefaultHandler {
 		} else {
 			ask = Collections.max(asks);
 		}
-		
+
 		nbTraders = 0;
 		if (!priceStation.isEmpty()){
 			/* compute active traders */
@@ -176,7 +345,7 @@ class Handler extends DefaultHandler {
 				}
 			}
 		}
-		
+
 		nbAsks = 0;
 		if (!asksStation.isEmpty()){
 			/* compute active traders */
@@ -191,5 +360,5 @@ class Handler extends DefaultHandler {
 		}
 	}
 
-	
+
 }

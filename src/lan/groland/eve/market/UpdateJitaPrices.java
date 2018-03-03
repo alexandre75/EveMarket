@@ -25,7 +25,7 @@ public class UpdateJitaPrices {
 	 */
 	public static void main(String[] args) throws SQLException, IOException, InterruptedException {
 		try (Connection conn = DriverManager.getConnection(
-				"jdbc:mysql://192.168.1.133:3306/eve", "alex", "chHfn8Zc")){
+				"jdbc:mysql://192.168.45.112:3306/eve", "alex", "chHfn8Zc")){
 			//  is returned in a "ResultSet" object.
 			String strSelect = "select name, type_id "+
 					"from eve_inv_types where name <> 'Unknown Type';";
@@ -84,7 +84,7 @@ class Inserter implements Callable<Inserter> {
 
 	@Override
 	public Inserter call() throws IOException {
-		OrderStats stats = OrdersStatsBuilder.build(id, 60003760, 10000002, true);
+		OrderStats stats = OrdersStatsBuilder.build(id, new long[]{60003760}, 10000002, true);
 		price = stats.getBid();
 		return this;
 	}
