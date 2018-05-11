@@ -1,5 +1,9 @@
 package lan.groland.eve.market;
 
+import io.swagger.client.ApiException;
+import io.swagger.client.api.MarketApi;
+import io.swagger.client.model.GetMarketsRegionIdOrders200Ok;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -12,7 +16,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.stream.JsonParser;
@@ -21,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.threeten.bp.LocalDateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -35,9 +42,9 @@ public class OrdersStatsBuilder {
 	}
 
 
-	public static OrderStats build(int id, long[] stations, int regionlimit) throws IOException {
-		return build(id, stations, regionlimit, false);
-	}
+//	public static OrderStats build(int id, long[] stations, int regionlimit) throws IOException {
+//		return build(id, stations, regionlimit, false);
+//	}
 
 	public static OrderStats oldbuild(int id, int stationId, int regionlimit, boolean station) throws IOException {
 		URL url = new URL("http://api.eve-central.com/api/quicklook?typeid="+id+"&regionlimit="+regionlimit);
@@ -65,6 +72,48 @@ public class OrdersStatsBuilder {
 
 	enum State {
 		START,READING,LOCATION,TYPE
+	}
+	
+	public OrdersStatsBuilder(){
+		
+	}
+	
+	private Map<Integer, OrderStats> stats;
+	
+	public void init(int region, long[] stationId, boolean stationIn) throws ApiException{
+		stats = new HashMap<>();
+		MarketApi market = new MarketApi();
+		int page = 1;
+		List<GetMarketsRegionIdOrders200Ok> orders;
+		do {
+			orders = market.getMarketsRegionIdOrders("sell", (Integer)region, null, null, page++, null, null, null);
+			System.out.println("Page : " + page);
+			for (GetMarketsRegionIdOrders200Ok order : orders){
+				if (stationIn && -1 == Arrays.binarySearch(stationId, order.getLocationId())) continue;	
+
+				OrderStats stat = stats.get(order.getTypeId());
+				if (stat == null){
+					stat = new OrderStats(0, Float.MAX_VALUE, 0, Float.MIN_VALUE);
+					stats.put(order.getTypeId(), stat);
+				}
+				if (order.isIsBuyOrder()){
+					stat.newBuy(order.getPrice());
+				} else {
+					stat.newSell(order.getPrice(), order.getIssued().toLocalDateTime());
+				}
+			}
+		} while(!orders.isEmpty());
+	}
+	
+	public OrderStats get(int id){
+		return stats.get(id);
+	}
+
+	
+	public static OrdersStatsBuilder newInstance(long[] stationId, int regionlimit, boolean stationIn) throws ApiException{
+		OrdersStatsBuilder o = new OrdersStatsBuilder();
+		o.init(regionlimit, stationId, stationIn);
+		return o;
 	}
 
 	public static OrderStats build(int id, long[] stationId, int regionlimit, boolean stationIn) throws IOException {

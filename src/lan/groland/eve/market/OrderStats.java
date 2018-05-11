@@ -1,6 +1,11 @@
 package lan.groland.eve.market;
 
+import org.threeten.bp.LocalDateTime;
+
 public class OrderStats {
+	private static LocalDateTime yesterday = LocalDateTime.now().minusDays(2);
+	
+	
 	private int nbTraders;
 	private float bid;
 	
@@ -37,6 +42,18 @@ public class OrderStats {
 	 */
 	public int nbSellOrders() {
 		return nbTraders;
+	}
+
+	public void newBuy(Double price) {
+		nbAsks++;
+		ask = (float)Math.max(ask, price);
+	}
+
+	public void newSell(Double price, LocalDateTime offsetDateTime) {
+		if (offsetDateTime.compareTo(yesterday) >= 0){
+			nbTraders++;
+		}
+		bid = (float) Math.min(bid, price);
 	}
 
 }
