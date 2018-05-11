@@ -1,5 +1,7 @@
 package lan.groland.eve.market;
 
+import io.swagger.client.ApiException;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,6 +13,10 @@ import java.sql.Statement;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class Main {
@@ -28,8 +34,9 @@ public class Main {
 	final public static int CATCH = 10000014;
 	final public static int CURSE = 10000012;
 	final public static int THE_CITADEL = 10000033;
+	final public static int ESOTERIA = 10000039;
 	
-	
+	final public static long[] D_P = {1024004680659l};
 	final public static long[] DODIXIE_STATION = {60011866};
 	final public static long[] AMARR_STATION = {60008494};
 	final public static long[] HEK_STATION = {60005686};
@@ -46,14 +53,18 @@ public class Main {
 	 * @param args
 	 * @throws SQLException 
 	 * @throws IOException 
+	 * @throws InterruptedException 
+	 * @throws ApiException 
 	 */
-	public static void main(String[] args) throws SQLException, IOException {
-		long[] station = AMARR_STATION;
-		int region = DOMAIN;
-		double cash = 2e9;
-		final int PLACE = 30; 
-		final int cargo = 845000;
+	public static void main(String[] args) throws SQLException, IOException, InterruptedException, ApiException {
+		final long[] station = D_P;
+		final int region = ESOTERIA;
+		final double cash = 3e9;
+		final int PLACE = 20; 
+		final int cargo = 320000;
 		final float fee = .962f; //.95f;
+		
+		OrdersStatsBuilder ordersStats = OrdersStatsBuilder.newInstance(station, region, false);
 		
 		Set<Integer> alreadyBought = new HashSet<Integer>();
 		try (BufferedReader reader = new BufferedReader(new FileReader("orders"))){
@@ -80,53 +91,72 @@ public class Main {
          Statement stmt = conn.createStatement();
          ResultSet rset = stmt.executeQuery(strSelect);
          
-         BestTrades trades = new BestTrades(PLACE, cargo); 
+         final BestTrades trades = new BestTrades(PLACE, cargo); 
          
          System.out.println("Preselect done");
+         
+         ExecutorService executor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.DAYS, new LinkedBlockingDeque<Runnable>());
  
          while(rset.next()) {   // Move the cursor to the next row
-            String name = rset.getString("name");
-            double buyPrice = rset.getDouble("jita_price_sell");
-            int    id   = rset.getInt("type_id");
-            double volume = rset.getDouble("volume");
+            final String name = rset.getString("name");
+            final double buyPrice = rset.getDouble("jita_price_sell");
+            final int    id   = rset.getInt("type_id");
+            final double volume = rset.getDouble("volume");
             log.fine(name + ", " + buyPrice + ", " + id);
                    
             if (volume > cargo) continue; // ne rentre pas dans le cargo
             if (alreadyBought.contains(id)) continue;
             
-            MarketStatistics.Sales sales = MarketStatistics.getInstance().medianPrice(id, region, buyPrice);
-            
-            double sellPrice = sales.price;
-            double quantitéJounalière = sales.quantity;
-            
-            if (quantitéJounalière < 1) continue; // il faut au moins en vendre 1 par jour
-            
-            
-            // On n'accepte pas les rentabilités historiques < 20%
-            if (sellPrice * .975f /*taxe*/ -buyPrice <= .20 * buyPrice) continue; 
-            
-            OrderStats orders = OrdersStatsBuilder.build(id, station, region);
-            
-            // Si pas de concurence, on tente la culbute
-            double prixDeVente = ((orders.getBid() < Float.MAX_VALUE)? orders.getBid() : buyPrice*1.5);
-            prixDeVente = Math.min(1.5*sellPrice, prixDeVente); // on ne vendra probablement pas à n'importe quel prix
-            double margeUnitaire =  prixDeVente * fee /*taxe*/ -buyPrice;
-           
-            if (prixDeVente/buyPrice < 1.40f) continue; // pas de rentabilité < 20% sinon on pourrait être en perte
-      
-            double quantiteAAcheter = Math.ceil(quantitéJounalière/(double)(orders.nbSellOrders() +1));
-            //if (orders.nbSellOrders() <= 1) quantiteAAcheter *= 2;
-           
-			double margeProbable = Math.min(quantitéJounalière/(double)(orders.nbSellOrders() +1), quantiteAAcheter)*margeUnitaire;
-			
-			
-			Trade trade = new Trade(new Item(id, name, volume), margeProbable, quantiteAAcheter, prixDeVente, buyPrice);
-            if (margeProbable < 1e6) continue; // on ne se baisse plus pour 3 fois rien
-			if (trade.ajust(cash/PLACE)){
-            	// System.out.println(name + "\t : " + cash.format(margeParTrader) + "\t" + volume);
-            	trades.add(trade);
-            }
+            Runnable run = new Runnable(){
+            	public void run(){
+            		try {
+
+            		MarketStatistics.Sales sales = MarketStatistics.getInstance().medianPrice(id, region, buyPrice);
+
+            		double sellPrice = sales.price;
+            		double quantitéJounalière = sales.quantity;
+
+            		if (quantitéJounalière < 1) return ; // il faut au moins en vendre 1 par jour
+
+
+            		// On n'accepte pas les rentabilités historiques < 20%
+            		if (sellPrice * .975f /*taxe*/ -buyPrice <= .20 * buyPrice) return; 
+
+            		
+            		
+            		OrderStats orders = ordersStats.get(id);
+            		if (orders == null) return;
+            		
+            		// Si pas de concurence, on tente la culbute
+            		double prixDeVente = ((orders.getBid() < Float.MAX_VALUE)? orders.getBid() : buyPrice*1.5);
+            		prixDeVente = Math.min(1.5*sellPrice, prixDeVente); // on ne vendra probablement pas à n'importe quel prix
+            		double margeUnitaire =  prixDeVente * fee /*taxe*/ -buyPrice;
+
+            		if (prixDeVente/buyPrice < 1.40f) return; // pas de rentabilité < 20% sinon on pourrait être en perte
+
+            		double quantiteAAcheter = Math.ceil(quantitéJounalière/(double)(orders.nbSellOrders() +1));
+            		//if (orders.nbSellOrders() <= 1) quantiteAAcheter *= 2;
+
+            		double margeProbable = Math.min(quantitéJounalière/(double)(orders.nbSellOrders() +1), quantiteAAcheter)*margeUnitaire;
+
+
+            		Trade trade = new Trade(new Item(id, name, volume), margeProbable, quantiteAAcheter, prixDeVente, buyPrice);
+            		if (margeProbable < 1e6) return; // on ne se baisse plus pour 3 fois rien
+            		if (trade.ajust(cash/PLACE)){
+            			// System.out.println(name + "\t : " + cash.format(margeParTrader) + "\t" + volume);
+            			trades.add(trade);
+            		}
+            		} catch(Exception e){
+            			log.severe(e.getLocalizedMessage());
+            			e.printStackTrace(System.out);
+            			System.exit(1);
+            		}
+            	}
+            };
+            executor.execute(run);
          }
+         executor.shutdown();
+         executor.awaitTermination(5, TimeUnit.HOURS);
          System.out.println(trades.multiBuyString());
          System.out.println(trades.toString());
          

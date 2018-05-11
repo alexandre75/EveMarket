@@ -25,7 +25,7 @@ public class BestTrades {
 	
 	private static NumberFormat intFormat = NumberFormat.getIntegerInstance();
 	
-	public void add(Trade trade) {
+	synchronized public void add(Trade trade) {
 		if (trade.getBenefParJour() <= min && trades.size() >= size) return;
 		
 		if (trades.size() >= size){
