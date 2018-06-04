@@ -17,8 +17,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 import javax.json.Json;
 import javax.json.stream.JsonParser;
@@ -27,7 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.threeten.bp.LocalDateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -86,20 +88,28 @@ public class OrdersStatsBuilder {
 		int page = 1;
 		List<GetMarketsRegionIdOrders200Ok> orders;
 		do {
-			orders = market.getMarketsRegionIdOrders("sell", (Integer)region, null, null, page++, null, null, null);
-			System.out.println("Page : " + page);
-			for (GetMarketsRegionIdOrders200Ok order : orders){
-				if (stationIn && -1 == Arrays.binarySearch(stationId, order.getLocationId())) continue;	
+			while (true){
+				try {
+					orders = market.getMarketsRegionIdOrders("sell", (Integer)region, null, null, page, null, null, null);
+					page++;
+					System.out.println("Page : " + page);
+					for (GetMarketsRegionIdOrders200Ok order : orders){
+						if (stationIn && -1 == Arrays.binarySearch(stationId, order.getLocationId())) continue;	
 
-				OrderStats stat = stats.get(order.getTypeId());
-				if (stat == null){
-					stat = new OrderStats(0, Float.MAX_VALUE, 0, Float.MIN_VALUE);
-					stats.put(order.getTypeId(), stat);
-				}
-				if (order.isIsBuyOrder()){
-					stat.newBuy(order.getPrice());
-				} else {
-					stat.newSell(order.getPrice(), order.getIssued().toLocalDateTime());
+						OrderStats stat = stats.get(order.getTypeId());
+						if (stat == null){
+							stat = new OrderStats(0, Float.MAX_VALUE, 0, Float.MIN_VALUE);
+							stats.put(order.getTypeId(), stat);
+						}
+						if (order.isIsBuyOrder()){
+							stat.newBuy(order.getPrice());
+						} else {
+							stat.newSell(order.getPrice(), order.getIssued().toLocalDateTime());
+						}
+					}
+					break;
+				} catch(ApiException e){
+					System.out.println(e.getLocalizedMessage());
 				}
 			}
 		} while(!orders.isEmpty());
@@ -269,6 +279,48 @@ public class OrdersStatsBuilder {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public Iterator<Integer> cheaperThan(double d) {
+		final Iterator<Entry<Integer, OrderStats>>iter = stats.entrySet().iterator();
+		return new Iterator<Integer>(){
+			
+			private Integer next;
+			
+			private void skip(){
+				if (next != null){
+					return;
+				}
+				next = null;
+				while(iter.hasNext()){
+					Entry<Integer, OrderStats> entr = iter.next();
+					if (entr.getValue().getBid() < d){
+						next = entr.getKey();
+						break;
+					} 
+				}
+			}
+			
+			@Override
+			synchronized public boolean hasNext() {
+				skip();
+				return next != null;
+			}
+
+			@Override
+			synchronized public Integer next() {
+				if (next == null){
+					skip();
+				}
+				if (next == null){
+					throw new NoSuchElementException();
+				}
+				int res = next;
+				next = null;
+				return res;
+			}
+			
+		};
 	}
 }
 
