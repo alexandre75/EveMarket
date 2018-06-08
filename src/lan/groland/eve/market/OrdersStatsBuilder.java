@@ -90,7 +90,7 @@ public class OrdersStatsBuilder {
 		do {
 			while (true){
 				try {
-					orders = market.getMarketsRegionIdOrders("sell", (Integer)region, null, null, page, null, null, null);
+					orders = market.getMarketsRegionIdOrders("all", (Integer)region, null, null, page, null, null, null);
 					page++;
 					System.out.println("Page : " + page);
 					for (GetMarketsRegionIdOrders200Ok order : orders){

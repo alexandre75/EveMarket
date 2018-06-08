@@ -60,7 +60,7 @@ public class Main {
 	final static int region = ESOTERIA;
 	final static  float fee = .962f; //.95f;
 	final static int PLACE = 20; 
-	final static double cash = 2500e6;
+	final static double cash = 1.8e9;
 	final static BestTrades trades = new BestTrades(PLACE, cargo); 
 	
 	static MongoCollection<Document> itemDescritions;
@@ -75,43 +75,44 @@ public class Main {
 	public static void main(String[] args) throws SQLException, IOException, InterruptedException, ApiException {
 		final long[] station = D_P;
 		
-		MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://jupiter:27017"));
-		MongoDatabase eve = mongoClient.getDatabase("Eve");
-		itemDescritions = eve.getCollection("Items");
+		try(MongoClient mongoClient = new MongoClient(new MongoClientURI("mongodb://jupiter:27017"))){
+			MongoDatabase eve = mongoClient.getDatabase("Eve");
+			itemDescritions = eve.getCollection("Items");
 
-		OrdersStatsBuilder ordersStats = OrdersStatsBuilder.newInstance(station, region, false);
+			OrdersStatsBuilder ordersStats = OrdersStatsBuilder.newInstance(station, region, false);
 
-		OrdersStatsBuilder jita = OrdersStatsBuilder.newInstance(new long[]{60003760}, 10000002, true);
+			OrdersStatsBuilder jita = OrdersStatsBuilder.newInstance(new long[]{60003760}, 10000002, true);
 
-		alreadyBought = new HashSet<Integer>();
-		try (BufferedReader reader = new BufferedReader(new FileReader("orders"))){
-			reader.readLine();
-			String l;
-			while ((l = reader.readLine()) != null){
-				String[] words = l.split(",");
-				if (Integer.parseInt(words[4]) == region){
-					alreadyBought.add(Integer.parseInt(words[1]));
+			alreadyBought = new HashSet<Integer>();
+			try (BufferedReader reader = new BufferedReader(new FileReader("orders"))){
+				reader.readLine();
+				String l;
+				while ((l = reader.readLine()) != null){
+					String[] words = l.split(",");
+					if (Integer.parseInt(words[4]) == region){
+						alreadyBought.add(Integer.parseInt(words[1]));
+					}
 				}
 			}
-		}
 
-		
 
-		ExecutorService executor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.DAYS, new LinkedBlockingDeque<Runnable>());
-		
-		
-		Iterator<Integer> items =  jita.cheaperThan(cash/10);
-		while(items.hasNext()) {   // Move the cursor to the next row
-			final int id = items.next();
-			OrderStats jitaP = jita.get(id);
-			OrderStats orders = ordersStats.get(id);
-			Runnable run = new Command(id, jitaP, orders);
-			executor.execute(run);
+
+			ExecutorService executor = new ThreadPoolExecutor(10, 10, 0, TimeUnit.DAYS, new LinkedBlockingDeque<Runnable>());
+
+
+			Iterator<Integer> items =  jita.cheaperThan(cash/10);
+			while(items.hasNext()) {   // Move the cursor to the next row
+				final int id = items.next();
+				OrderStats jitaP = jita.get(id);
+				OrderStats orders = ordersStats.get(id);
+				Runnable run = new Command(id, jitaP, orders);
+				executor.execute(run);
+			}
+			executor.shutdown();
+			executor.awaitTermination(5, TimeUnit.HOURS);
+			System.out.println(trades.multiBuyString());
+			System.out.println(trades.toString());
 		}
-		executor.shutdown();
-		executor.awaitTermination(5, TimeUnit.HOURS);
-		System.out.println(trades.multiBuyString());
-		System.out.println(trades.toString());
 
 	}
 
