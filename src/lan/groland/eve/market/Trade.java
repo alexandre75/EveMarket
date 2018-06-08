@@ -8,7 +8,6 @@ public class Trade {
 		INTEGER_INSTANCE.setGroupingUsed(false);
 	}
 	
-	private static final NumberFormat numberFormat = NumberFormat.getInstance();
 	private double euristic;
 	private double quantitéJounalière;
 	private double sellPrice;
