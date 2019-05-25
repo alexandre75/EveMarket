@@ -1,4 +1,4 @@
-package lan.groland.eve.market;
+package lan.groland.eve.domain.market;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
