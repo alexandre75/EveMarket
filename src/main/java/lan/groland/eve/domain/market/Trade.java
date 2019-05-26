@@ -23,7 +23,7 @@ public interface Trade {
    * @param maxCash investment threshold
    * @return an adjusted trade or empty
    */
-  Optional<Trade> ajust(double maxCash);
+  Optional<Trade> adjust(double maxCash);
 
   String multiBuyString();
 

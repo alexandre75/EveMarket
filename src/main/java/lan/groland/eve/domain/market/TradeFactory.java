@@ -14,6 +14,14 @@ public class TradeFactory {
   TradeFactory(EveData eveData) {
     this.eveData = eveData;
   }
+  
+  public Optional<Trade> createOptional(Item item, Station station) {
+    try {
+      return Optional.of(create(item, station));
+    } catch(OrderBookEmptyException e) {
+      return Optional.empty();
+    }
+  }
 
   public Trade create(Item item, Station station) throws OrderBookEmptyException {
     double buyPrice = eveData.stationOrderStats(item.getId(), Station.JITA).getBid();
@@ -86,7 +94,7 @@ public class TradeFactory {
     }
 
     @Override
-    public Optional<Trade> ajust(double maxCash) {
+    public Optional<Trade> adjust(double maxCash) {
       if (capital() < maxCash) {
         return Optional.of(this);
       }
