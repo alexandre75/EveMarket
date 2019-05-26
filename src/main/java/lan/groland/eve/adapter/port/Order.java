@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter;
+package lan.groland.eve.adapter.port;
 
 import org.threeten.bp.OffsetDateTime;
 

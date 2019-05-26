@@ -1,5 +1,9 @@
 package lan.groland.eve.domain.market;
 
+import java.util.Date;
+
+import org.bson.Document;
+
 public class Item {
   private int id;
   private String name;
@@ -42,4 +46,13 @@ public class Item {
     return true;
   }
 
+  public static Item from(Document doc) {
+    return new Item(doc.getInteger("id", -1), doc.getString("name"), doc.getDouble("volume"));
+  }
+
+  public Document document() {
+    return new Document("id", id).append("volume", getVolume())
+                                 .append("name", getName())
+                                 .append("timestamp", new Date());
+  }
 }

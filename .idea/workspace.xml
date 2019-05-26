@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b57e6ee7-fc90-4567-9443-0d58dfddf9ab" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/.classpath" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.project" beforeDir="false" afterPath="$PROJECT_DIR$/.project" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/adapter/port/EsiEveData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/adapter/port/EsiEveDataModule.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/adapter/port/Order.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/application/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/domain/market/BestTrades.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/domain/market/EveData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/domain/market/Item.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/domain/market/OrderStats.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/domain/market/Sales.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/domain/market/Station.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/lan/groland/eve/domain/market/Trade.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/lan/groland/eve/adapter/EsiEveDataTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/lan/groland/eve/adapter/port/EsiEveDataTest.java" afterDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/out/" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="testRunner" value="GRADLE" />
+    <option name="delegatedBuild" value="true" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/java/lan/groland/eve/adapter/port/CachedItemRepositoryTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="330">
+              <caret line="34" column="39" lean-forward="true" selection-start-line="34" selection-start-column="39" selection-end-line="34" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/compiler.xml" />
+        <option value="$PROJECT_DIR$/.idea/encodings.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="260" />
+    <option name="y" value="54" />
+    <option name="width" value="1400" />
+    <option name="height" value="954" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EveMarket" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EveMarket" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EveMarket" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EveMarket" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EveMarket" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EveMarket" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="port" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="JUnit.lan.groland.eve.adapter.port in EveMarket">
+    <configuration name="CachedItemRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="EveMarket" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lan.groland.eve.adapter.port.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="lan.groland.eve.adapter.port" />
+      <option name="MAIN_CLASS_NAME" value="lan.groland.eve.adapter.port.CachedItemRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="lan.groland.eve.adapter.port in EveMarket" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="EveMarket" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lan.groland.eve.adapter.port.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="lan.groland.eve.adapter.port" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.lan.groland.eve.adapter.port in EveMarket" />
+        <item itemvalue="JUnit.CachedItemRepositoryTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b57e6ee7-fc90-4567-9443-0d58dfddf9ab" name="Default Changelist" comment="" />
+      <created>1558848665600</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1558848665600</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="CachedItemRepositoryTest - 2019.05.25 at 22h 32m 07s.xml">
+      <configuration name="CachedItemRepositoryTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="lan_groland_eve_adapter_port_in_EveMarket - 2019.05.25 at 22h 32m 17s.xml">
+      <configuration name="lan.groland.eve.adapter.port in EveMarket" configurationId="JUnit" />
+    </history-entry>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="34" width="1920" height="1139" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Image Layers" />
+      <window_info id="Designer" />
+      <window_info id="UI Designer" />
+      <window_info id="Capture Tool" />
+      <window_info id="Favorites" side_tool="true" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18055555" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Terminal" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Messages" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32934132" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Palette" />
+      <window_info anchor="right" id="Theme Preview" />
+      <window_info anchor="right" id="Maven" />
+      <window_info anchor="right" id="Capture Analysis" />
+      <window_info anchor="right" id="Palette&#9;" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/test/java/lan/groland/eve/adapter/port/CachedItemRepositoryTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="34" column="39" lean-forward="true" selection-start-line="34" selection-start-column="39" selection-end-line="34" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

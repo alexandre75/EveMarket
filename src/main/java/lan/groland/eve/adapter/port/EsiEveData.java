@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter;
+package lan.groland.eve.adapter.port;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,6 +29,7 @@ import io.swagger.client.api.MarketApi;
 import io.swagger.client.model.GetMarketsRegionIdOrders200Ok;
 import io.swagger.client.model.GetMarketsStructuresStructureId200Ok;
 import lan.groland.eve.domain.market.EveData;
+import lan.groland.eve.domain.market.OrderBookEmptyException;
 import lan.groland.eve.domain.market.OrderStats;
 import lan.groland.eve.domain.market.Sales;
 import lan.groland.eve.domain.market.Station;
@@ -46,7 +47,7 @@ public class EsiEveData implements EveData {
   private Map<Station, Map<Integer, OrderStats>> stationCache = new EnumMap<>(Station.class);
   private DocumentBuilder builder;
 
-  public EsiEveData(String token) {
+  EsiEveData(String token) {
     try {
       this.token = token;
       builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -101,10 +102,15 @@ public class EsiEveData implements EveData {
   }
 
   @Override
-  public OrderStats stationOrderStats(int itemId, Station station) {
+  public OrderStats stationOrderStats(int itemId, Station station) throws OrderBookEmptyException {
     Map<Integer, OrderStats> stationStats = 
         stationCache.computeIfAbsent(station, k -> orderStats(k.getRegion(), station, true));
-    return stationStats.get(itemId);
+    OrderStats res = stationStats.get(itemId);
+    if (res == null) {
+      throw new OrderBookEmptyException(itemId, station);
+    } else {
+      return res;
+    }
   }
 
   private Map<Integer, OrderStats> orderStats(Region region, Station station, boolean stationIn) {

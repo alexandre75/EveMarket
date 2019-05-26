@@ -13,7 +13,7 @@ public interface EveData {
 
   OrderStats regionOrderStats(int id, Station.Region region);
 
-  OrderStats stationOrderStats(int id, Station jita);
+  OrderStats stationOrderStats(int id, Station jita) throws OrderBookEmptyException;
 
   /**
    * Returns the typeId of all the items cheaper than the given value in the given region.

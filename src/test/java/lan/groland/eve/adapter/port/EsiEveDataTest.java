@@ -1,11 +1,8 @@
-package lan.groland.eve.adapter;
+package lan.groland.eve.adapter.port;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.apache.log4j.Logger;
 import org.junit.jupiter.api.Test;
-
+import org.apache.log4j.Logger;
+import lan.groland.eve.adapter.port.EsiEveData;
 import lan.groland.eve.domain.market.Sales;
 import lan.groland.eve.domain.market.Station.Region;
 
