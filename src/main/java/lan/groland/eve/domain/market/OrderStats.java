@@ -53,4 +53,9 @@ public class OrderStats {
     bid = (float) Math.min(bid, price);
   }
 
+  public double expSellPrice(double buyPrice, double medianPrice) {
+    double prixDeVente = ((getBid() < Float.MAX_VALUE)? getBid() : buyPrice*1.5);
+    prixDeVente = Math.min(1.5 * medianPrice, prixDeVente); // on ne vendra probablement pas à n'importe quel prix
+    return prixDeVente;
+  }
 }
