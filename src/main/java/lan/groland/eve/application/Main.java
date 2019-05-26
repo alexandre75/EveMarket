@@ -16,6 +16,7 @@ import io.swagger.client.ApiException;
 import lan.groland.eve.adapter.port.EsiEveDataModule;
 import lan.groland.eve.domain.market.BestTrades;
 import lan.groland.eve.domain.market.ShipmentService;
+import lan.groland.eve.domain.market.ShipmentSpecification;
 import lan.groland.eve.domain.market.Station;
 
 
@@ -62,6 +63,7 @@ public class Main {
    * @throws ApiException 
    */
   public BestTrades main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
-    return shipmentService.optimizeCargo(station, 6e9, cargo, alreadyBought);
+    ShipmentSpecification spec = new ShipmentSpecification(cargo, alreadyBought);
+    return shipmentService.optimizeCargo(station, 6e9, cargo, spec);
   }
 }

@@ -19,6 +19,10 @@ public class Sales {
   public double getPrice() {
     return price;
   }
+  
+  Sales adjustQuantity(double newQty) {
+    return new Sales(newQty, price);
+  }
 
   @Override
   public String toString() {
