@@ -1,7 +1,9 @@
 package lan.groland.eve.domain.market;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 
@@ -27,17 +29,22 @@ public class ShipmentService {
 
   public BestTrades optimizeCargo(Station station, double cash, int cargo, ShipmentSpecification shipSpec) {
     BestTrades trades = new BestTrades(TRADING_SLOT, cargo); 
-    List<Integer> items =  eveData.cheaperThan(cash / 10, Station.JITA);
+      List<Item> items =  eveData.cheaperThan(cash / 10, Station.JITA)
+                                 .stream()
+                                 .map(itemRepository::find)
+                                 .filter(shipSpec::isSatisfiedBy)
+                                 .collect(Collectors.toList());
+    return optimizeCargo(items, trades, station, cash, shipSpec);
+  }
+  
+  public BestTrades optimizeCargo(Collection<Item> items, BestTrades trades, Station station, double cash, ShipmentSpecification shipSpec) {
     items.parallelStream()
-         .map(itemRepository::find)
-         .filter(shipSpec::isSatisfiedBy)
          .map(item -> tradeFactory.createOptional(item, station))
          .flatMap(Optional::stream)
          .filter(shipSpec::isSatisfiedByTrade)
          .map(trade -> trade.adjust(cash / TRADING_SLOT))
          .flatMap(Optional::stream)
          .forEach(trades::add);
-
     return trades;
   }
 }
