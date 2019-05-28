@@ -7,17 +7,18 @@ import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public class ShipmentSpecification {
-  private int cargo;
-  private Set<Integer> alreadyBought;
+  private final int maxVolume;
+  private final Set<Integer> alreadyBought;
+  private final int maxSize = 30;
 
   public ShipmentSpecification(int cargo, Set<Integer> alreadyBought) {
     super();
-    this.cargo = cargo;
+    this.maxVolume = cargo;
     this.alreadyBought = new HashSet<>(alreadyBought);
   }
 
   public boolean isSatisfiedBy(Item item) {
-    if (item.getVolume() <= cargo && !alreadyBought.contains(item.getId())){
+    if (item.getVolume() <= maxVolume && !alreadyBought.contains(item.getId())){
       return true;
     } else {
       return false;
@@ -42,5 +43,9 @@ public class ShipmentSpecification {
     }
     
     return true;
+  }
+
+  public boolean isSatifiedByCargo(Cargo cargo) {
+    return cargo.size() <= maxSize && cargo.getVolume() <= maxVolume;
   }
 }

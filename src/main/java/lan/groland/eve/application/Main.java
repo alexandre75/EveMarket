@@ -14,7 +14,7 @@ import com.google.inject.Inject;
 
 import io.swagger.client.ApiException;
 import lan.groland.eve.adapter.port.EsiEveDataModule;
-import lan.groland.eve.domain.market.BestTrades;
+import lan.groland.eve.domain.market.Cargo;
 import lan.groland.eve.domain.market.ShipmentService;
 import lan.groland.eve.domain.market.ShipmentSpecification;
 import lan.groland.eve.domain.market.Station;
@@ -35,7 +35,7 @@ public class Main {
 
     Station station = Station.D_P;
     Set<Integer> alreadyBought = alreadyBought(station);
-    BestTrades trades = INSTANCE.main(station, alreadyBought);
+    Cargo trades = INSTANCE.main(station, alreadyBought);
     System.out.println(trades.multiBuyString());
     System.out.println(trades.toString());
   }
@@ -62,8 +62,8 @@ public class Main {
    * @throws InterruptedException 
    * @throws ApiException 
    */
-  public BestTrades main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
+  public Cargo main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
     ShipmentSpecification spec = new ShipmentSpecification(cargo, alreadyBought);
-    return shipmentService.optimizeCargo(station, 6e9, cargo, spec);
+    return shipmentService.optimizeCargo(station, 6e9, spec);
   }
 }

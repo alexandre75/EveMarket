@@ -114,5 +114,12 @@ public class TradeFactory {
     public String multiBuyString(){
       return String.format("%s x%d", item.getName(), (int)unitSoldDay());
     }
+    
+    @Override
+    public int compareTo(Trade other) {
+      return Double.compare(getBenefParJour(), other.getBenefParJour());
+    }
   }
+  
+  
 }

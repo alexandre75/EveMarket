@@ -2,7 +2,7 @@ package lan.groland.eve.domain.market;
 
 import java.util.Optional;
 
-public interface Trade {
+public interface Trade extends Comparable<Trade> {
 
   double getBenefParJour();
 
