@@ -11,16 +11,25 @@ import lan.groland.eve.domain.market.Station.Region;
  */
 public interface EveData {
 
-  OrderStats regionOrderStats(int id, Station.Region region);
-
-  OrderStats stationOrderStats(int id, Station jita) throws OrderBookEmptyException;
+  /**
+   * Returns a summary of the order book in the given station
+   * @param station a station
+   */
+  List<OrderStats> stationOrderStats(Station station);
+  
+  /**
+   * Returns a summary of the order book for a given id and region.
+   * @param item the item of interest
+   * @param region the scope of the survey
+   * @throws OrderBookEmptyException the book is empty
+   */
+  OrderStats regionOrderStats(ItemId item, Station.Region region) throws OrderBookEmptyException;
 
   /**
-   * Returns the typeId of all the items cheaper than the given value in the given region.
-   * @param maxPrice cap price
-   * @param station the station scope 
+   * Returns a summary of the last month sales for an item in a region.
+   * @param id item the item of interest
+   * @param region the scope of the survey
+   * @param buyPrice price at which we intend to buy the item.
    */
-  List<Integer> cheaperThan(double maxPrice, Station station);
-
-  Sales medianPrice(int id, Region region, double buyPrice);
+  Sales medianPrice(ItemId item, Region region, double buyPrice);
 }

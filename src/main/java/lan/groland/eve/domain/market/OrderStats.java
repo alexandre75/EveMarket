@@ -9,6 +9,7 @@ public class OrderStats {
 
   private int nbTraders;
   private float bid;
+  private final ItemId itemId;
 
   /**
    * Number of <b>active</b> traders (buy orders).
@@ -22,11 +23,12 @@ public class OrderStats {
     return ask;
   }
 
-  public OrderStats(int nbTraders, float f, int nbAsks, float a) {
+  public OrderStats(ItemId item, int nbTraders, float f, int nbAsks, float a) {
     this.nbTraders = nbTraders;
     this.bid = f;
     this.nbAsks = nbAsks;
     this.ask = a;
+    itemId = item;
   }
 
   public float getBid() {
@@ -57,5 +59,9 @@ public class OrderStats {
     double prixDeVente = ((getBid() < Float.MAX_VALUE)? getBid() : buyPrice*1.5);
     prixDeVente = Math.min(1.5 * medianPrice, prixDeVente); // on ne vendra probablement pas à n'importe quel prix
     return prixDeVente;
+  }
+
+  public ItemId getItem() {
+    return itemId;
   }
 }

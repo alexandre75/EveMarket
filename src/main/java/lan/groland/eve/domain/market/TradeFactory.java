@@ -1,6 +1,8 @@
 package lan.groland.eve.domain.market;
 
+import java.util.Map;
 import java.util.Optional;
+import static java.util.stream.Collectors.toMap;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -9,10 +11,13 @@ import com.google.inject.Inject;
 @Immutable
 public class TradeFactory {
   private final EveData eveData;
+  private final Map<ItemId, Float> buyPrices;
 
   @Inject
   TradeFactory(EveData eveData) {
     this.eveData = eveData;
+    buyPrices = eveData.stationOrderStats(Station.JITA).stream()
+                       .collect(toMap(OrderStats::getItem, OrderStats::getBid));
   }
   
   public Optional<Trade> createOptional(Item item, Station station) {
@@ -24,9 +29,9 @@ public class TradeFactory {
   }
 
   public Trade create(Item item, Station station) throws OrderBookEmptyException {
-    double buyPrice = eveData.stationOrderStats(item.getId(), Station.JITA).getBid();
-    OrderStats sellStats = eveData.regionOrderStats(item.getId(), station.getRegion());
-    Sales sales = eveData.medianPrice(item.getId(), station.getRegion(), buyPrice);
+    double buyPrice = buyPrices.get(item.getItemId());
+    OrderStats sellStats = eveData.regionOrderStats(item.getItemId(), station.getRegion());
+    Sales sales = eveData.medianPrice(item.getItemId(), station.getRegion(), buyPrice);
 
     return new RawTrade(item, buyPrice, sellStats, sales);
   }

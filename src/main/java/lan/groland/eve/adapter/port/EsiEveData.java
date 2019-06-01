@@ -11,7 +11,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
@@ -29,7 +28,7 @@ import io.swagger.client.api.MarketApi;
 import io.swagger.client.model.GetMarketsRegionIdOrders200Ok;
 import io.swagger.client.model.GetMarketsStructuresStructureId200Ok;
 import lan.groland.eve.domain.market.EveData;
-import lan.groland.eve.domain.market.OrderBookEmptyException;
+import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.OrderStats;
 import lan.groland.eve.domain.market.Sales;
 import lan.groland.eve.domain.market.Station;
@@ -44,7 +43,6 @@ public class EsiEveData implements EveData {
   private String token;
 
   private Map<Region, Map<Integer, OrderStats>> regionCache = new EnumMap<>(Region.class);
-  private Map<Station, Map<Integer, OrderStats>> stationCache = new EnumMap<>(Station.class);
   private DocumentBuilder builder;
 
   EsiEveData(String token) {
@@ -95,22 +93,10 @@ public class EsiEveData implements EveData {
   }
 
   @Override
-  public OrderStats regionOrderStats(int itemId, Region region) {
+  public OrderStats regionOrderStats(ItemId itemId, Region region) {
     Map<Integer, OrderStats> regionStats = 
         regionCache.computeIfAbsent(region, k -> orderStats(k, null, false));
-    return regionStats.get(itemId);
-  }
-
-  @Override
-  public OrderStats stationOrderStats(int itemId, Station station) throws OrderBookEmptyException {
-    Map<Integer, OrderStats> stationStats = 
-        stationCache.computeIfAbsent(station, k -> orderStats(k.getRegion(), station, true));
-    OrderStats res = stationStats.get(itemId);
-    if (res == null) {
-      throw new OrderBookEmptyException(itemId, station);
-    } else {
-      return res;
-    }
+    return regionStats.get(itemId.typeId());
   }
 
   private Map<Integer, OrderStats> orderStats(Region region, Station station, boolean stationIn) {
@@ -126,7 +112,7 @@ public class EsiEveData implements EveData {
 
       OrderStats stat = stats.get(order.getTypeId());
       if (stat == null){
-        stat = new OrderStats(0, Float.MAX_VALUE, 0, Float.MIN_VALUE);
+        stat = new OrderStats(new ItemId(order.getTypeId()), 0, Float.MAX_VALUE, 0, Float.MIN_VALUE);
         stats.put(order.getTypeId(), stat);
       }
       if (order.isBuyOrder()){
@@ -185,16 +171,8 @@ public class EsiEveData implements EveData {
   }
 
   @Override
-  public List<Integer> cheaperThan(double maxPrice, Station station) {
-    return stationCache.computeIfAbsent(station, k -> orderStats(k.getRegion(), station, true))
-        .entrySet().stream()
-        .filter(entry -> entry.getValue().getBid() < maxPrice)
-        .map(Map.Entry::getKey)
-        .collect(Collectors.toList());
-  }
-
-  @Override
-  public Sales medianPrice(int id, Region region, double buyPrice) {
+  public Sales medianPrice(ItemId itemId, Region region, double buyPrice) {
+    int id = itemId.typeId();
     /*
      * Computes and returns :
      * - Daily sold volume : a transaction is considered a "sale" if price > JitaPrice
@@ -269,5 +247,11 @@ public class EsiEveData implements EveData {
     } catch(SAXException e) {
       throw new AssertionError("Site changed?", e);
     }
+  }
+
+  @Override
+  public List<OrderStats> stationOrderStats(Station region) {
+    // TODO Auto-generated method stub
+    return null;
   }
 }

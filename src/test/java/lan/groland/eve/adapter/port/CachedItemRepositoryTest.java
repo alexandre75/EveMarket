@@ -7,6 +7,8 @@ import org.mockito.MockitoAnnotations;
 
 import lan.groland.eve.adapter.port.CachedItemRepository;
 import lan.groland.eve.domain.market.Item;
+import lan.groland.eve.domain.market.ItemId;
+
 import static org.hamcrest.Matchers.*;
 
 import static org.mockito.Mockito.*;
@@ -31,22 +33,22 @@ class CachedItemRepositoryTest {
   @Test
   void shouldReturnFromCache() {
     Item pistol = new Item(5, "pistol", 6D);
-    when(mongoRepo.find(5)).thenReturn(pistol);
-    Item mayBePistol = subject.find(5);
+    when(mongoRepo.find(new ItemId(5))).thenReturn(pistol);
+    Item mayBePistol = subject.find(new ItemId(5));
     
     assertThat(mayBePistol, equalTo(pistol));
-    verify(eveRepo, never()).find(anyInt());
+    verify(eveRepo, never()).find(any());
   }
 
   @Test
   void shouldGoThroughCache() {
     Item pistol = new Item(5, "pistol", 6D);
-    when(eveRepo.find(5)).thenReturn(pistol);
+    when(eveRepo.find(new ItemId(5))).thenReturn(pistol);
     
-    Item mayBePistol = subject.find(5);
+    Item mayBePistol = subject.find(new ItemId(5));
     
     assertThat(mayBePistol, equalTo(pistol));
-    verify(eveRepo, times(1)).find(5);
+    verify(eveRepo, times(1)).find(new ItemId(5));
     verify(mongoRepo, times(1)).add(pistol);
   }
 }

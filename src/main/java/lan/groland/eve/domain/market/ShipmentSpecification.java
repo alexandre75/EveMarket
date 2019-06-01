@@ -18,7 +18,7 @@ public class ShipmentSpecification {
   }
 
   public boolean isSatisfiedBy(Item item) {
-    if (item.getVolume() <= maxVolume && !alreadyBought.contains(item.getId())){
+    if (item.getVolume() <= maxVolume && !alreadyBought.contains(item.getItemId().typeId())){
       return true;
     } else {
       return false;

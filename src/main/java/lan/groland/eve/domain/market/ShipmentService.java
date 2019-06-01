@@ -28,11 +28,11 @@ public class ShipmentService {
   }
 
   public Cargo optimizeCargo(Station station, double cash, ShipmentSpecification shipSpec) {
-      List<Item> items =  eveData.cheaperThan(cash / 10, Station.JITA)
-                                 .stream()
-                                 .map(itemRepository::find)
-                                 .filter(shipSpec::isSatisfiedBy)
-                                 .collect(Collectors.toList());
+    List<Item> items =  eveData.stationOrderStats(Station.JITA)
+                               .stream().filter(os -> os.getBid() < cash / 10)
+                               .map(os -> itemRepository.find(os.getItem()))
+                               .filter(shipSpec::isSatisfiedBy)
+                               .collect(Collectors.toList());
     return load(items, station, cash, shipSpec);
   }
   

@@ -5,11 +5,23 @@ import java.util.Date;
 import org.bson.Document;
 
 public class Item {
-  private int id;
+  private ItemId id;
   private String name;
   private double volume;
 
-  public int getId() {
+  public Item(int id, String name, double volume){
+    this.id = new ItemId(id);
+    this.name = name;
+    this.volume = volume;
+  }
+  
+  public Item(ItemId id, String name, double volume){
+    this.id = id;
+    this.name = name;
+    this.volume = volume;
+  }
+  
+  public ItemId getItemId() {
     return id;
   }
 
@@ -21,15 +33,9 @@ public class Item {
     return volume;
   }
 
-  public Item(int id, String name, double volume){
-    this.id = id;
-    this.name = name;
-    this.volume = volume;
-  }
-
   @Override
   public int hashCode() {
-    return Integer.hashCode(id);
+    return id.hashCode();
   }
 
   @Override

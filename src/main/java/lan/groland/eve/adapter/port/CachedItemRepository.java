@@ -15,6 +15,7 @@ import io.swagger.client.ApiException;
 import io.swagger.client.api.UniverseApi;
 import io.swagger.client.model.GetUniverseTypesTypeIdOk;
 import lan.groland.eve.domain.market.Item;
+import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.ItemRepository;
 
 /**
@@ -35,7 +36,7 @@ public class CachedItemRepository implements ItemRepository, AutoCloseable {
   }
 
   @Override
-  public Item find(int id) {
+  public Item find(ItemId id) {
     Item item = mongoRepo.find(id);
     if (item == null) {
       item = eveRepo.find(id);
@@ -76,8 +77,8 @@ class MongoItemRepository implements ItemRepository, AutoCloseable {
   }
 
   @Override
-  public Item find(int id) {
-    BasicDBObject query = new BasicDBObject("id", id);
+  public Item find(ItemId id) {
+    BasicDBObject query = new BasicDBObject("id", id.typeId());
     return Item.from(itemDescritions.find(query).first());
   }
   
@@ -96,12 +97,12 @@ class EveItemRepository implements ItemRepository {
   private UniverseApi univers = new UniverseApi();
   
   @Override
-  public Item find(int id) {
+  public Item find(ItemId id) {
     GetUniverseTypesTypeIdOk info;
     while(true){
       try {
-        info = univers.getUniverseTypesTypeId(id, null, null, null, null, null);
-        return new Item(id, info.getName(), info.getVolume());
+        info = univers.getUniverseTypesTypeId(id.typeId(), null, null, null, null, null);
+        return new Item(id.typeId(), info.getName(), info.getVolume());
       } catch(ApiException e){
       }
     }
