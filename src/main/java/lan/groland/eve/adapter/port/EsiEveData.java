@@ -11,6 +11,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilder;
@@ -43,6 +44,7 @@ public class EsiEveData implements EveData {
   private String token;
 
   private Map<Region, Map<Integer, OrderStats>> regionCache = new EnumMap<>(Region.class);
+  private Map<Station, Map<Integer, OrderStats>> stationCache = new EnumMap<>(Station.class);
   private DocumentBuilder builder;
 
   EsiEveData(String token) {
@@ -250,8 +252,9 @@ public class EsiEveData implements EveData {
   }
 
   @Override
-  public List<OrderStats> stationOrderStats(Station region) {
-    // TODO Auto-generated method stub
-    return null;
+  public List<OrderStats> stationOrderStats(Station station) {
+    Map<Integer, OrderStats> stationStats = 
+        stationCache.computeIfAbsent(station, k -> orderStats(k.getRegion(), station, true));
+    return stationStats.values().stream().collect(Collectors.toList());
   }
 }
