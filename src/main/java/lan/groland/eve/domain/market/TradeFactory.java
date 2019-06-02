@@ -4,14 +4,18 @@ import java.util.Map;
 import java.util.Optional;
 import static java.util.stream.Collectors.toMap;
 
-import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import com.google.inject.Inject;
 
-@Immutable
+import lan.groland.eve.domain.market.Station.Region;
+
+@ThreadSafe
 public class TradeFactory {
   private final EveData eveData;
   private final Map<ItemId, Float> buyPrices;
+  private Map<ItemId, OrderStats> destination;
+  private Region region;
 
   @Inject
   TradeFactory(EveData eveData) {
@@ -30,10 +34,21 @@ public class TradeFactory {
 
   public Trade create(Item item, Station station) throws OrderBookEmptyException {
     double buyPrice = buyPrices.get(item.getItemId());
-    OrderStats sellStats = eveData.regionOrderStats(item.getItemId(), station.getRegion());
+    OrderStats sellStats = getDestination(station.getRegion()).get(item.getItemId());
     Sales sales = eveData.medianPrice(item.getItemId(), station.getRegion(), buyPrice);
 
     return new RawTrade(item, buyPrice, sellStats, sales);
+  }
+  
+  private synchronized Map<ItemId, OrderStats> getDestination(Region region){
+    if (destination == null) {
+      destination = eveData.regionOrderStats(region).stream()
+          .collect(toMap(OrderStats::getItem, orderStats -> orderStats));
+      this.region = region;
+    } else {
+      assert this.region == region;
+    }
+    return destination;
   }
 
   private static class RawTrade implements Trade {

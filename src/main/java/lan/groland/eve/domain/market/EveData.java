@@ -23,7 +23,7 @@ public interface EveData {
    * @param region the scope of the survey
    * @throws OrderBookEmptyException the book is empty
    */
-  OrderStats regionOrderStats(ItemId item, Station.Region region) throws OrderBookEmptyException;
+  List<OrderStats> regionOrderStats(Station.Region region);
 
   /**
    * Returns a summary of the last month sales for an item in a region.

@@ -1,6 +1,10 @@
 package lan.groland.eve.domain.market;
 
+import java.util.Objects;
+
 import org.threeten.bp.LocalDateTime;
+
+import com.google.common.base.Preconditions;
 
 public class OrderStats {
   private static LocalDateTime yesterday = LocalDateTime.now().minusDays(2);
@@ -8,7 +12,7 @@ public class OrderStats {
   private float ask;
 
   private int nbTraders;
-  private float bid;
+  private double bid;
   private final ItemId itemId;
 
   /**
@@ -23,16 +27,23 @@ public class OrderStats {
     return ask;
   }
 
-  public OrderStats(ItemId item, int nbTraders, float f, int nbAsks, float a) {
+  public OrderStats(ItemId item, int nbTraders, double bid) {
+    this(item, nbTraders, bid, -1, -1F);
+  }
+  
+  public OrderStats(ItemId item, int nbTraders, double bid, int nbAsks, float ask) {
+    Preconditions.checkArgument(nbTraders >= 0, "nbTraders > 0");
+    Preconditions.checkArgument(bid >= 0, "bid > 0");
+    
     this.nbTraders = nbTraders;
-    this.bid = f;
+    this.bid = bid;
     this.nbAsks = nbAsks;
-    this.ask = a;
-    itemId = item;
+    this.ask = ask;
+    itemId = Objects.requireNonNull(item, "item");
   }
 
   public float getBid() {
-    return bid;
+    return (float) bid;
   }
 
   /**
