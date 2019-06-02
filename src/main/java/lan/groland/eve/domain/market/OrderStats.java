@@ -15,18 +15,6 @@ public class OrderStats {
   private double bid;
   private final ItemId itemId;
 
-  /**
-   * Number of <b>active</b> traders (buy orders).
-   * @return
-   */
-  public int getNbAsks() {
-    return nbAsks;
-  }
-
-  public float getAsk() {
-    return ask;
-  }
-
   public OrderStats(ItemId item, int nbTraders, double bid) {
     this(item, nbTraders, bid, -1, -1F);
   }
@@ -40,6 +28,18 @@ public class OrderStats {
     this.nbAsks = nbAsks;
     this.ask = ask;
     itemId = Objects.requireNonNull(item, "item");
+  }
+  
+  /**
+   * Number of <b>active</b> traders (buy orders).
+   * @return
+   */
+  public int getNbAsks() {
+    return nbAsks;
+  }
+
+  public float getAsk() {
+    return ask;
   }
 
   public float getBid() {
