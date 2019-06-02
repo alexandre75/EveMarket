@@ -9,8 +9,11 @@ plugins {
 
 repositories {
     mavenLocal()
+    
+    jcenter()
+    
     maven {
-        url = 'http://central'
+        url = 'https://mvnrepository.com/artifact'
     }
     flatDir {
         dirs 'lib'
@@ -26,6 +29,8 @@ dependencies {
     testCompile 'org.mockito:mockito-core:2.27.0'
     testCompile 'org.hamcrest:hamcrest:2.1'
     compile 'swagger-java-client:swagger-java-client-1.0.0'
+    // https://mvnrepository.com/artifact/javax.json/javax.json-api
+	compile 'javax.json:javax.json-api:1.1.4'
 }
 
 group = 'EveMarket'

@@ -95,10 +95,10 @@ public class EsiEveData implements EveData {
   }
 
   @Override
-  public OrderStats regionOrderStats(ItemId itemId, Region region) {
+  public List<OrderStats> regionOrderStats(Region region) {
     Map<Integer, OrderStats> regionStats = 
         regionCache.computeIfAbsent(region, k -> orderStats(k, null, false));
-    return regionStats.get(itemId.typeId());
+    return new ArrayList<>(regionStats.values());
   }
 
   private Map<Integer, OrderStats> orderStats(Region region, Station station, boolean stationIn) {
