@@ -11,6 +11,11 @@ import com.google.inject.Inject;
 
 import lan.groland.eve.domain.market.Station.Region;
 
+/**
+ * 
+ * @author alexandre
+ *
+ */
 @ThreadSafe
 public class TradeFactory {
   private final EveData eveData;
@@ -48,6 +53,18 @@ public class TradeFactory {
     return true;
   }
   
+  /**
+   * Calculate financial data we could expect by shipping the given item the {@code destination}.
+   * <ul>
+   * <li>Load order books for origin and destination station;
+   * <li>Calculate possible selling price and volume
+   * <li>Derive the financial data characterizing the trade.
+   * <ul>
+   * @param item the item bought at Jita
+   * @param station item is sold at "sell" price in this station.
+   * @return the subsequent trade.
+   * @throws OrderBookEmptyException
+   */
   public Trade create(Item item, Station station) throws OrderBookEmptyException {
     if (!buyPrices.containsKey(item.getItemId())) {
       throw new OrderBookEmptyException(item.getItemId(), Station.JITA);
@@ -123,7 +140,7 @@ public class TradeFactory {
 
     @Override
     public double lastMonthMargin() {
-      return (sellHistory.price * .975f /*taxe*/ - buyPrice) / buyPrice;
+      return (sellHistory.price * .975D /*taxe*/ - buyPrice) / buyPrice;
     }
 
     @Override
@@ -133,7 +150,8 @@ public class TradeFactory {
 
     @Override
     public double benefit() {
-      return Math.min(unitSoldDay() / (double)(sellStats.nbSellOrders() +1), quantiteAAcheter()) * margeUnitaire();
+      return Math.min(unitSoldDay() / (double)(sellStats.nbSellOrders() +1), quantiteAAcheter()) 
+          * margeUnitaire();
     }
 
     @Override
@@ -163,6 +181,4 @@ public class TradeFactory {
       return Double.compare(getBenefParJour(), other.getBenefParJour());
     }
   }
-  
-  
 }
