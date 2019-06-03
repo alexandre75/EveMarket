@@ -27,7 +27,7 @@ public class ShipmentService {
     this.tradeFactory = tradeFactory;
   }
 
-  public Cargo optimizeCargo(ShipmentSpecification shipSpec) {
+  public Collection<Trade> optimizeCargo(ShipmentSpecification shipSpec) {
     List<Item> items =  eveData.stationOrderStats(Station.JITA)
                                .stream().filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
                                .map(os -> itemRepository.find(os.getItem()))
@@ -36,7 +36,7 @@ public class ShipmentService {
     return load(items, shipSpec);
   }
   
-  public Cargo load(Collection<Item> items, ShipmentSpecification shipSpec) {
+  public Collection<Trade> load(Collection<Item> items, ShipmentSpecification shipSpec) {
     Cargo trades = new Cargo(shipSpec); 
     items.parallelStream()
          .map(item -> tradeFactory.createOptional(item, shipSpec))

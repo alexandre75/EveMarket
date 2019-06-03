@@ -4,7 +4,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -14,15 +20,17 @@ import com.google.inject.Inject;
 
 import io.swagger.client.ApiException;
 import lan.groland.eve.adapter.port.EsiEveDataModule;
-import lan.groland.eve.domain.market.Cargo;
 import lan.groland.eve.domain.market.ShipmentService;
 import lan.groland.eve.domain.market.ShipmentSpecification;
 import lan.groland.eve.domain.market.Station;
+import lan.groland.eve.domain.market.Trade;
 
 
 public class Main {
   private static final Main INSTANCE = new Main();
-
+  private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::getBenefParJour);
+  private static NumberFormat intFormat = NumberFormat.getIntegerInstance();
+  
   @SuppressWarnings("unused")
   private static Logger logger = Logger.getLogger(Main.class);
   
@@ -35,9 +43,9 @@ public class Main {
 
     Station station = Station.D_P;
     Set<Integer> alreadyBought = alreadyBought(station);
-    Cargo trades = INSTANCE.main(station, alreadyBought);
-    System.out.println(trades.multiBuyString());
-    System.out.println(trades.toString());
+    Collection<Trade> trades = INSTANCE.main(station, alreadyBought);
+    System.out.println(multiBuyString(trades));
+    System.out.println(toString(trades));
   }
 
   private static Set<Integer> alreadyBought(Station station) throws IOException {
@@ -54,6 +62,30 @@ public class Main {
     }
     return alreadyBought;
   }
+  
+  public static String toString(Collection<Trade> trades){
+    List<Trade> sortedTrade = new ArrayList<>(trades);
+    Collections.sort(sortedTrade, TRADE_COMPARATOR);
+    float benef = 0, invest = 0;
+    StringBuilder b = new StringBuilder("=============================================\n");
+    for (Trade t : sortedTrade){
+      b.append(t + "\n");
+      benef += t.getBenefParJour();
+      invest += t.capital();
+    }
+    b.append("Benefice potentiel :" + intFormat.format(benef) + " / " + intFormat.format(invest) + ": " +NumberFormat.getPercentInstance().format(benef/invest)) ;
+    return b.toString();
+  }
+
+  public static String multiBuyString(Collection<Trade> trades){
+    List<Trade> sortedTrade = new ArrayList<>(trades);
+    Collections.sort(sortedTrade, TRADE_COMPARATOR);
+    StringBuilder b = new StringBuilder("=============================================\n");
+    for (Trade t : sortedTrade){
+      b.append(t.multiBuyString() + "\n");
+    }
+    return b.toString();
+  }
 
   /**
    * @param args
@@ -62,7 +94,7 @@ public class Main {
    * @throws InterruptedException 
    * @throws ApiException 
    */
-  public Cargo main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
+  public Collection<Trade> main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
     ShipmentSpecification spec = new ShipmentSpecification.Builder(station, cash)
                                                           .alreadyBought(alreadyBought)
                                                           .build();
