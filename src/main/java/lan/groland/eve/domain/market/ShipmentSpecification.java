@@ -1,20 +1,32 @@
 package lan.groland.eve.domain.market;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.concurrent.Immutable;
 
+/**
+ * This class constraints shipments. They contain all the information the shipment
+ * must verify such as destination, cash, trading slots etc.
+ * Moreover this method encapsulate business rules a shipment must verify.
+ * 
+ * @author alexandre
+ *
+ */
 @Immutable
 public class ShipmentSpecification {
   private final int maxVolume;
   private final Set<Integer> alreadyBought;
-  private final int maxSize = 30;
+  private final int maxSize;
+  private final Station destination;
 
-  public ShipmentSpecification(int cargo, Set<Integer> alreadyBought) {
+  public ShipmentSpecification(Builder builder) {
     super();
-    this.maxVolume = cargo;
-    this.alreadyBought = new HashSet<>(alreadyBought);
+    this.maxVolume = builder.maxVolume;
+    this.alreadyBought = builder.alreadyBought;
+    this.destination = builder.destination;
+    maxSize = builder.maxSize;
   }
 
   public boolean isSatisfiedBy(Item item) {
@@ -47,5 +59,55 @@ public class ShipmentSpecification {
 
   public boolean isSatifiedByCargo(Cargo cargo) {
     return cargo.size() <= maxSize && cargo.getVolume() <= maxVolume;
+  }
+
+  public Station getDestination() {
+    return destination;
+  }
+  
+  public static class Builder {
+    private int maxVolume = 320_000;
+    private Set<Integer> alreadyBought = Collections.emptySet();
+    private int maxSize = 30;
+    private final Station destination;
+    
+    /**
+     * Sets the destination
+     * @param destination destination of the shipment
+     */
+    public Builder(Station destination) {
+      this.destination = destination;
+    }
+
+    /**
+     * Max volume of the shipment.
+     * @param maxVolume the maximum volume the ship can carry.
+     */
+    public Builder maxVolume(int maxVolume) {
+      this.maxVolume = maxVolume;
+      return this;
+    }
+
+    /**
+     * Blacklist of items.
+     * @param alreadyBought used to provide a blacklist.
+     */
+    public Builder alreadyBought(Set<Integer> alreadyBought) {
+      this.alreadyBought = new HashSet<>(alreadyBought);
+      return this;
+    }
+
+    /**
+     * Number of trading slots
+     * @param tradingSlot
+     */
+    public Builder tradingSlot(int tradingSlot) {
+      this.maxSize = tradingSlot;
+      return this;
+    }
+ 
+    public ShipmentSpecification build() {
+      return new ShipmentSpecification(this);
+    }
   }
 }

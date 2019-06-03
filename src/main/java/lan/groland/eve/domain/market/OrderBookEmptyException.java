@@ -20,6 +20,10 @@ public class OrderBookEmptyException extends Exception {
     this.itemId = itemId;
   }
 
+  public OrderBookEmptyException(ItemId item, Station station2) {
+     this(item.typeId(), station2);
+  }
+
   public int getItemId() {
     return itemId;
   }

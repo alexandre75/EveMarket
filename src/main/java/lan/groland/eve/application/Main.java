@@ -23,10 +23,10 @@ import lan.groland.eve.domain.market.Station;
 public class Main {
   private static final Main INSTANCE = new Main();
 
-  static Logger logger = Logger.getLogger(Main.class);
-
-  final static int cargo = 320000;
-  final static double cash = 6e9;
+  @SuppressWarnings("unused")
+  private static Logger logger = Logger.getLogger(Main.class);
+  
+  static final double cash = 6e9;
   
   @Inject ShipmentService shipmentService;
 
@@ -63,7 +63,9 @@ public class Main {
    * @throws ApiException 
    */
   public Cargo main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
-    ShipmentSpecification spec = new ShipmentSpecification(cargo, alreadyBought);
-    return shipmentService.optimizeCargo(station, 6e9, spec);
+    ShipmentSpecification spec = new ShipmentSpecification.Builder(station)
+                                                          .alreadyBought(alreadyBought)
+                                                          .build();
+    return shipmentService.optimizeCargo(6e9, spec);
   }
 }

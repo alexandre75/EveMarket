@@ -28,17 +28,24 @@ public class TradeFactory {
                        .collect(toMap(OrderStats::getItem, OrderStats::getBid));
   }
   
-  public Optional<Trade> createOptional(Item item, Station station) {
+  public Optional<Trade> createOptional(Item item, ShipmentSpecification shipSpec) {
     try {
-      return Optional.of(create(item, station));
+      return Optional.of(create(item, shipSpec.getDestination()));
     } catch(OrderBookEmptyException e) {
       return Optional.empty();
     }
   }
 
   public Trade create(Item item, Station station) throws OrderBookEmptyException {
+    if (!buyPrices.containsKey(item.getItemId())) {
+      throw new OrderBookEmptyException(item.getItemId(), Station.JITA);
+    }
     double buyPrice = buyPrices.get(item.getItemId());
+    
     OrderStats sellStats = getDestination(station.getRegion()).get(item.getItemId());
+    if (sellStats == null) {
+      throw new OrderBookEmptyException(item.getItemId(), station);
+    }
     Sales sales = eveData.medianPrice(item.getItemId(), station.getRegion(), buyPrice);
 
     return new RawTrade(item, buyPrice, sellStats, sales);

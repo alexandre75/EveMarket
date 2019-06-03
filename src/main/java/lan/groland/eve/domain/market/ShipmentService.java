@@ -27,19 +27,19 @@ public class ShipmentService {
     this.tradeFactory = tradeFactory;
   }
 
-  public Cargo optimizeCargo(Station station, double cash, ShipmentSpecification shipSpec) {
+  public Cargo optimizeCargo(double cash, ShipmentSpecification shipSpec) {
     List<Item> items =  eveData.stationOrderStats(Station.JITA)
                                .stream().filter(os -> os.getBid() < cash / 10)
                                .map(os -> itemRepository.find(os.getItem()))
                                .filter(shipSpec::isSatisfiedBy)
                                .collect(Collectors.toList());
-    return load(items, station, cash, shipSpec);
+    return load(items, cash, shipSpec);
   }
   
-  public Cargo load(Collection<Item> items, Station station, double cash, ShipmentSpecification shipSpec) {
+  public Cargo load(Collection<Item> items, double cash, ShipmentSpecification shipSpec) {
     Cargo trades = new Cargo(shipSpec); 
     items.parallelStream()
-         .map(item -> tradeFactory.createOptional(item, station))
+         .map(item -> tradeFactory.createOptional(item, shipSpec))
          .flatMap(Optional::stream)
          .filter(shipSpec::isSatisfiedByTrade)
          .map(trade -> trade.adjust(cash / TRADING_SLOT))
