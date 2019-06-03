@@ -75,4 +75,48 @@ public class OrderStats {
   public ItemId getItem() {
     return itemId;
   }
+
+  @Override
+  public String toString() {
+    return "OrderStats [nbTraders=" + nbTraders + ", bid=" + bid + ", itemId=" + itemId + "]";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Float.floatToIntBits(ask);
+    long temp;
+    temp = Double.doubleToLongBits(bid);
+    result = prime * result + (int) (temp ^ (temp >>> 32));
+    result = prime * result + ((itemId == null) ? 0 : itemId.hashCode());
+    result = prime * result + nbAsks;
+    result = prime * result + nbTraders;
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    OrderStats other = (OrderStats) obj;
+    if (Float.floatToIntBits(ask) != Float.floatToIntBits(other.ask))
+      return false;
+    if (Double.doubleToLongBits(bid) != Double.doubleToLongBits(other.bid))
+      return false;
+    if (itemId == null) {
+      if (other.itemId != null)
+        return false;
+    } else if (!itemId.equals(other.itemId))
+      return false;
+    if (nbAsks != other.nbAsks)
+      return false;
+    if (nbTraders != other.nbTraders)
+      return false;
+    return true;
+  }
 }

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import static java.util.stream.Collectors.toMap;
 
+import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
 import com.google.inject.Inject;
@@ -14,7 +15,10 @@ import lan.groland.eve.domain.market.Station.Region;
 public class TradeFactory {
   private final EveData eveData;
   private final Map<ItemId, Float> buyPrices;
+  
+  @GuardedBy("this")
   private Map<ItemId, OrderStats> destination;
+  @GuardedBy("this")
   private Region region;
 
   @Inject

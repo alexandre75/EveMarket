@@ -27,11 +27,16 @@ import lan.groland.eve.domain.market.Station.Region;
 public class EdsEveData implements EveData {
   
   private EsiEveData failOver = new EsiEveData("");
+  private final String httpPrefix;
   
+  public EdsEveData(String httpPrefix) {
+    this.httpPrefix = httpPrefix;
+  }
+
   @Override
   public List<OrderStats> stationOrderStats(Station station) {
     try {
-      URL url = new URL("http://localhost/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/books");
+      URL url = new URL(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/books");
       try (InputStream is = url.openStream()){
         OrderStatsTranslator translator = new OrderStatsTranslator(is);
           return translator.parse();
@@ -46,7 +51,7 @@ public class EdsEveData implements EveData {
   @Override
   public List<OrderStats> regionOrderStats(Region region) {
     try {
-      URL url = new URL("http://localhost/traders?region_id=" + region.getRegionId());
+      URL url = new URL(httpPrefix + "/traders?region_id=" + region.getRegionId());
       try (InputStream is = url.openStream()){
         OrderStatsTranslator translator = new OrderStatsTranslator(is);
           return translator.parse();

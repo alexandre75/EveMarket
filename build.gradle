@@ -7,6 +7,10 @@ plugins {
     id 'maven-publish'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 repositories {
     mavenLocal()
     
@@ -26,11 +30,18 @@ dependencies {
     compile 'org.mongodb:mongo-java-driver:3.10.2'
     compile 'org.threeten:threetenbp:1.4.0'
     compile 'org.junit.jupiter:junit-jupiter-api:5.4.2'
-    testCompile 'org.mockito:mockito-core:2.27.0'
-    testCompile 'org.hamcrest:hamcrest:2.1'
     compile 'swagger-java-client:swagger-java-client-1.0.0'
     // https://mvnrepository.com/artifact/javax.json/javax.json-api
 	compile 'javax.json:javax.json-api:1.1.4'
+	compile 'org.glassfish:javax.json:1.1.4'
+	
+    testCompile 'org.mockito:mockito-core:2.27.0'
+    testCompile 'org.hamcrest:hamcrest:2.1'
+	// https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock
+	testCompile 'com.github.tomakehurst:wiremock-jre8:2.23.2'
+	
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'	
 }
 
 group = 'EveMarket'
