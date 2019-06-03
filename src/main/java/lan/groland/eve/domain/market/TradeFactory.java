@@ -30,12 +30,24 @@ public class TradeFactory {
   
   public Optional<Trade> createOptional(Item item, ShipmentSpecification shipSpec) {
     try {
-      return Optional.of(create(item, shipSpec.getDestination()));
+      Trade trade = null;
+      if (isTradable(item)) {
+        trade = create(item, shipSpec.getDestination());
+        if (!shipSpec.isSatisfiedByTrade(trade)) {
+          trade = null;
+        }
+      }
+      return Optional.ofNullable(trade);
     } catch(OrderBookEmptyException e) {
       return Optional.empty();
     }
   }
 
+  private boolean isTradable(Item item) {
+    // TODO implements item filter in order to avoid exception
+    return true;
+  }
+  
   public Trade create(Item item, Station station) throws OrderBookEmptyException {
     if (!buyPrices.containsKey(item.getItemId())) {
       throw new OrderBookEmptyException(item.getItemId(), Station.JITA);

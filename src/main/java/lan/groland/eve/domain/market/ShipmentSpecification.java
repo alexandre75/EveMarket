@@ -20,6 +20,7 @@ public class ShipmentSpecification {
   private final Set<Integer> alreadyBought;
   private final int maxSize;
   private final Station destination;
+  private final double cashAvailable;
 
   public ShipmentSpecification(Builder builder) {
     super();
@@ -27,6 +28,7 @@ public class ShipmentSpecification {
     this.alreadyBought = builder.alreadyBought;
     this.destination = builder.destination;
     maxSize = builder.maxSize;
+    cashAvailable = builder.cashAvailable;
   }
 
   public boolean isSatisfiedBy(Item item) {
@@ -65,7 +67,12 @@ public class ShipmentSpecification {
     return destination;
   }
   
+  public double cashAvailable() {
+    return cashAvailable;
+  }
+
   public static class Builder {
+    private final double cashAvailable;
     private int maxVolume = 320_000;
     private Set<Integer> alreadyBought = Collections.emptySet();
     private int maxSize = 30;
@@ -75,8 +82,9 @@ public class ShipmentSpecification {
      * Sets the destination
      * @param destination destination of the shipment
      */
-    public Builder(Station destination) {
+    public Builder(Station destination, double cashAvailable) {
       this.destination = destination;
+      this.cashAvailable = cashAvailable;
     }
 
     /**

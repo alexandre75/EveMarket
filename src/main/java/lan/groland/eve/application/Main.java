@@ -63,9 +63,9 @@ public class Main {
    * @throws ApiException 
    */
   public Cargo main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
-    ShipmentSpecification spec = new ShipmentSpecification.Builder(station)
+    ShipmentSpecification spec = new ShipmentSpecification.Builder(station, cash)
                                                           .alreadyBought(alreadyBought)
                                                           .build();
-    return shipmentService.optimizeCargo(6e9, spec);
+    return shipmentService.optimizeCargo(spec);
   }
 }
