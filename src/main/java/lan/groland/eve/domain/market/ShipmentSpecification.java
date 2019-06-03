@@ -9,6 +9,7 @@ import javax.annotation.concurrent.Immutable;
 /**
  * This class constraints shipments. They contain all the information the shipment
  * must verify such as destination, cash, trading slots etc.
+ * All shipments are from Jita station.
  * Moreover this method encapsulate business rules a shipment must verify.
  * 
  * @author alexandre
@@ -22,7 +23,7 @@ public class ShipmentSpecification {
   private final Station destination;
   private final double cashAvailable;
 
-  public ShipmentSpecification(Builder builder) {
+  private ShipmentSpecification(Builder builder) {
     super();
     this.maxVolume = builder.maxVolume;
     this.alreadyBought = builder.alreadyBought;
@@ -59,7 +60,7 @@ public class ShipmentSpecification {
     return true;
   }
 
-  public boolean isSatifiedByCargo(Cargo cargo) {
+  public boolean isSatisfiedByCargo(Cargo cargo) {
     return cargo.size() <= maxSize && cargo.getVolume() <= maxVolume;
   }
 
@@ -69,6 +70,10 @@ public class ShipmentSpecification {
   
   public double cashAvailable() {
     return cashAvailable;
+  }
+  
+  public int tradingSlots() {
+    return maxSize;
   }
 
   public static class Builder {

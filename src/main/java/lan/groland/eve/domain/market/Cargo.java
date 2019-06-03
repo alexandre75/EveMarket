@@ -36,7 +36,7 @@ public class Cargo extends AbstractCollection<Trade> {
    */
   public synchronized boolean add(Trade trade) {
     addTrade(trade);
-    while(!specif.isSatifiedByCargo(this)) {
+    while(!specif.isSatisfiedByCargo(this)) {
       popMin();
     }
     return true;
@@ -60,24 +60,12 @@ public class Cargo extends AbstractCollection<Trade> {
     return capacity;
   }
   
+  /**
+   * Manual synchronization on this object is necessary when
+   * getting or traversing the iterator.
+   */
   @Override
   public Iterator<Trade> iterator() {
-    Iterator<Trade> notThreadSafe = trades.iterator();
-    return new Iterator<Trade>() {
-
-      @Override
-      public boolean hasNext() {
-        synchronized(Cargo.this) {
-          return notThreadSafe.hasNext();
-        }
-      }
-
-      @Override
-      public Trade next() {
-        synchronized(Cargo.this) {
-          return notThreadSafe.next();
-        }
-      }
-    };
+    return trades.iterator();
   }
 }

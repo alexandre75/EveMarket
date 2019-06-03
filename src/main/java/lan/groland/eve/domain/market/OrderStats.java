@@ -29,18 +29,6 @@ public class OrderStats {
     this.ask = ask;
     itemId = Objects.requireNonNull(item, "item");
   }
-  
-  /**
-   * Number of <b>active</b> traders (buy orders).
-   * @return
-   */
-  public int getNbAsks() {
-    return nbAsks;
-  }
-
-  public float getAsk() {
-    return ask;
-  }
 
   public float getBid() {
     return (float) bid;
@@ -64,12 +52,6 @@ public class OrderStats {
       nbTraders++;
     }
     bid = (float) Math.min(bid, price);
-  }
-
-  public double expSellPrice(double buyPrice, double medianPrice) {
-    double prixDeVente = ((getBid() < Float.MAX_VALUE)? getBid() : buyPrice*1.5);
-    prixDeVente = Math.min(1.5 * medianPrice, prixDeVente); // on ne vendra probablement pas à n'importe quel prix
-    return prixDeVente;
   }
 
   public ItemId getItem() {
