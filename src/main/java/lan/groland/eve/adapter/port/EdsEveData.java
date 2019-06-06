@@ -72,11 +72,7 @@ public class EdsEveData implements EveData {
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       if (connection.getResponseCode() == 200) {
         try (InputStream is = connection.getInputStream()) {
-          JsonReader historiesReader = Json.createReader(is);
-          JsonObject historiesObj = historiesReader.readObject();
-          Sales sales = new Sales(historiesObj.getJsonNumber("quantity").doubleValue(),
-                                  historiesObj.getJsonNumber("median").doubleValue());
-          return sales;
+          return parseSales(is);
         }
       } else {
         throw new IllegalStateException("Item : " + item + ", region:" + region);
@@ -86,6 +82,14 @@ public class EdsEveData implements EveData {
     } catch(IOException e) {
       throw new UncheckedIOException(e);
     }
+  }
+  
+  static Sales parseSales(InputStream is) {
+    JsonReader historiesReader = Json.createReader(is);
+    JsonObject historiesObj = historiesReader.readObject();
+    Sales sales = new Sales(historiesObj.getJsonNumber("quantity").doubleValue(),
+                            historiesObj.getJsonNumber("median").doubleValue());
+    return sales;
   }
 }
 
