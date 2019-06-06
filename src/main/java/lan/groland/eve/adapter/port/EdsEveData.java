@@ -3,12 +3,15 @@ package lan.groland.eve.adapter.port;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
@@ -26,7 +29,6 @@ import lan.groland.eve.domain.market.Station.Region;
  */
 public class EdsEveData implements EveData {
   
-  private EsiEveData failOver = new EsiEveData("");
   private final String httpPrefix;
   
   public EdsEveData(String httpPrefix) {
@@ -65,7 +67,25 @@ public class EdsEveData implements EveData {
 
   @Override
   public Sales medianPrice(ItemId item, Region region, double buyPrice) {
-    return failOver.medianPrice(item, region, buyPrice);
+    try {
+      URL url = new URL(httpPrefix + "/regions/" +  region.getRegionId() + "/histories/" + item.typeId());
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      if (connection.getResponseCode() == 200) {
+        try (InputStream is = connection.getInputStream()) {
+          JsonReader historiesReader = Json.createReader(is);
+          JsonObject historiesObj = historiesReader.readObject();
+          Sales sales = new Sales(historiesObj.getJsonNumber("quantity").doubleValue(),
+                                  historiesObj.getJsonNumber("median").doubleValue());
+          return sales;
+        }
+      } else {
+        throw new IllegalStateException("Item : " + item + ", region:" + region);
+      }
+    } catch(MalformedURLException e) {
+      throw new AssertionError(e);
+    } catch(IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 }
 
