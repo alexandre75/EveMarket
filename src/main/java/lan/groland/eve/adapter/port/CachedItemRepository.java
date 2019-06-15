@@ -1,15 +1,16 @@
 package lan.groland.eve.adapter.port;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.lang.ref.Cleaner;
 
-import org.bson.Document;
-
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Indexes;
 
 import io.swagger.client.ApiException;
 import io.swagger.client.api.UniverseApi;
@@ -61,14 +62,13 @@ class MongoItemRepository implements ItemRepository, AutoCloseable {
   private static final Cleaner CLEANER = Cleaner.create();
   private final Cleaner.Cleanable cleanable;
   
-  private final MongoCollection<Document> itemDescritions;
-  private final MongoClient mongoClient;
+  private final MongoCollection<Item> itemDescritions;
 
-  public MongoItemRepository() {
-    mongoClient = new MongoClient(new MongoClientURI("mongodb://jupiter:27017"));
-    MongoDatabase eve = mongoClient.getDatabase("Eve");
-    itemDescritions = eve.getCollection("Items");
-    
+  @Inject
+  public MongoItemRepository(MongoClient mongoClient, @Named("mongo.schema") String schema) {
+    MongoDatabase eve = mongoClient.getDatabase(schema);
+    itemDescritions = eve.getCollection("Items", Item.class);
+    itemDescritions.createIndex(Indexes.hashed("type_id"));
     cleanable = CLEANER.register(this, mongoClient::close);
   }
 
@@ -78,13 +78,18 @@ class MongoItemRepository implements ItemRepository, AutoCloseable {
 
   @Override
   public Item find(ItemId id) {
-    BasicDBObject query = new BasicDBObject("id", id.typeId());
-    return Item.from(itemDescritions.find(query).first());
+    return itemDescritions.find(eq("type_id", id.typeId())).first();
   }
   
   public void add(Item item) {
-    Document res = item.document();
-    itemDescritions.insertOne(res);
+    itemDescritions.insertOne(item);
+  }
+
+  /**
+   * Clears the items for testing purpose
+   */
+  void clear() {
+    itemDescritions.deleteMany(new BasicDBObject());
   }
 }
 

@@ -1,28 +1,24 @@
 package lan.groland.eve.domain.market;
 
-import java.util.Date;
-
-import org.bson.Document;
-
 public class Item {
-  private ItemId id;
+  private ItemId itemId;
   private String name;
   private double volume;
-
+  
   public Item(int id, String name, double volume){
-    this.id = new ItemId(id);
+    this.itemId = new ItemId(id);
     this.name = name;
     this.volume = volume;
   }
   
   public Item(ItemId id, String name, double volume){
-    this.id = id;
+    this.itemId = id;
     this.name = name;
     this.volume = volume;
   }
   
   public ItemId getItemId() {
-    return id;
+    return itemId;
   }
 
   public String getName() {
@@ -35,7 +31,10 @@ public class Item {
 
   @Override
   public int hashCode() {
-    return id.hashCode();
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((itemId == null) ? 0 : itemId.hashCode());
+    return result;
   }
 
   @Override
@@ -47,18 +46,16 @@ public class Item {
     if (getClass() != obj.getClass())
       return false;
     Item other = (Item) obj;
-    if (id != other.id)
+    if (itemId == null) {
+      if (other.itemId != null)
+        return false;
+    } else if (!itemId.equals(other.itemId))
       return false;
     return true;
   }
 
-  public static Item from(Document doc) {
-    return new Item(doc.getInteger("id", -1), doc.getString("name"), doc.getDouble("volume"));
-  }
-
-  public Document document() {
-    return new Document("id", id).append("volume", getVolume())
-                                 .append("name", getName())
-                                 .append("timestamp", new Date());
+  @Override
+  public String toString() {
+    return "Item [itemId=" + itemId + ", name=" + name + ", volume=" + volume + "]";
   }
 }

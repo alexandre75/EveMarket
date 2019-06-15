@@ -15,8 +15,10 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import com.google.inject.name.Names;
 
 import io.swagger.client.ApiException;
 import lan.groland.eve.adapter.port.EsiEveDataModule;
@@ -25,6 +27,12 @@ import lan.groland.eve.domain.market.ShipmentSpecification;
 import lan.groland.eve.domain.market.Station;
 import lan.groland.eve.domain.market.Trade;
 
+class Config extends AbstractModule {
+  @Override
+  protected void configure() {
+    bind(String.class).annotatedWith(Names.named("mongo.schema")).toInstance("EveMarket");
+  }
+}
 
 public class Main {
   private static final Main INSTANCE = new Main();
@@ -39,9 +47,9 @@ public class Main {
   @Inject ShipmentService shipmentService;
 
   public static void main(String[] args) throws IOException, InterruptedException {
-    Guice.createInjector(new EsiEveDataModule()).injectMembers(INSTANCE);
+    Guice.createInjector(new Config(), new EsiEveDataModule()).injectMembers(INSTANCE);
 
-    Station station = Station.D_P;
+    Station station = Station.AMARR_STATION;
     Set<Integer> alreadyBought = alreadyBought(station);
     Collection<Trade> trades = INSTANCE.main(station, alreadyBought);
     System.out.println(multiBuyString(trades));

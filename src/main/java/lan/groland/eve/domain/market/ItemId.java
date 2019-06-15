@@ -6,6 +6,8 @@ import javax.annotation.concurrent.Immutable;
 public final class ItemId {
   private int typeId;
   
+  public ItemId() {}
+  
   public ItemId(int typeId) {
     this.typeId = typeId;
   }
@@ -39,5 +41,9 @@ public final class ItemId {
     if (typeId != other.typeId)
       return false;
     return true;
+  }
+
+  public static ItemId from(int id) {
+    return new ItemId(id);
   }
 }
