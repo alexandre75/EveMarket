@@ -45,7 +45,7 @@ public class EdsEveData implements EveData {
   @Override
   public List<OrderStats> stationOrderStats(Station station) {
     try {
-      URL url = new URL(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/books");
+      URL url = new URL(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/book");
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.addRequestProperty("Content-Type", "application/json");
       connection.connect();
@@ -64,7 +64,7 @@ public class EdsEveData implements EveData {
   @Override
   public List<OrderStats> regionOrderStats(Region region) {
     try {
-      URL url = new URL(httpPrefix + "/traders?region_id=" + region.getRegionId());
+      URL url = new URL(httpPrefix + "/regions/" + region.getRegionId() + "/book");
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.addRequestProperty("Content-Type", "application/json");
       connection.connect();
