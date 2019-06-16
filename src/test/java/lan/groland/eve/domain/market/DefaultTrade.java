@@ -47,7 +47,12 @@ public class DefaultTrade implements Trade {
   }
 
   @Override
-  public String multiBuyString() {
-    return toString();
+  public int quantiteAAcheter() {
+    return 0;
+  }
+
+  @Override
+  public Item item() {
+    return null;
   }
 }

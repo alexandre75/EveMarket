@@ -22,6 +22,8 @@ public interface Trade extends Comparable<Trade> {
    * @return an adjusted trade or empty
    */
   Optional<Trade> adjust(double maxCash);
+  
+  int quantiteAAcheter();
 
-  String multiBuyString();
+  Item item();
 }

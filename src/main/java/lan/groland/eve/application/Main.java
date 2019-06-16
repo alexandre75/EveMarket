@@ -44,6 +44,8 @@ public class Main {
   
   static final double cash = 6e9;
   
+  private static TradeFormat tradeFormat = new TradeFormat();
+  
   @Inject ShipmentService shipmentService;
 
   public static void main(String[] args) throws IOException, InterruptedException {
@@ -88,11 +90,12 @@ public class Main {
   public static String multiBuyString(Collection<Trade> trades){
     List<Trade> sortedTrade = new ArrayList<>(trades);
     Collections.sort(sortedTrade, TRADE_COMPARATOR);
-    StringBuilder b = new StringBuilder("=============================================\n");
+    StringBuffer sb = new StringBuffer("=============================================\n");
     for (Trade t : sortedTrade){
-      b.append(t.multiBuyString() + "\n");
+      tradeFormat.format(t, sb, null);
+      sb.append("\n");
     }
-    return b.toString();
+    return sb.toString();
   }
 
   /**

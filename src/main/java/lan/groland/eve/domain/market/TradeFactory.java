@@ -128,7 +128,7 @@ public class TradeFactory {
       return sellHistory.quantity;
     }
 
-    private int quantiteAAcheter() {
+    public int quantiteAAcheter() {
       // we buy for 2 day
       return (int) Math.ceil(dailySaleForecast() * 2);
     }
@@ -183,11 +183,6 @@ public class TradeFactory {
     }
 
     @Override
-    public String multiBuyString(){
-      return String.format("%s x%d", item.getName(), (int)unitSoldDay());
-    }
-    
-    @Override
     public int compareTo(Trade other) {
       return Double.compare(dailyBenefit(), other.dailyBenefit());
     }
@@ -200,6 +195,11 @@ public class TradeFactory {
                         .add("buy", this.buyPrice)
                         .add("sell", this.prixDeVente())
                         .toString();
+    }
+
+    @Override
+    public Item item() {
+      return item;
     }
   }
 }
