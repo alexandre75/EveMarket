@@ -61,7 +61,8 @@ public class ShipmentSpecification {
   }
 
   public boolean isSatisfiedByCargo(Cargo cargo) {
-    return cargo.size() <= maxSize && cargo.getVolume() <= maxVolume;
+    return cargo.size() <= maxSize && cargo.getVolume() <= maxVolume 
+        && cargo.requiredCapital() <= cashAvailable(); 
   }
 
   public Station getDestination() {

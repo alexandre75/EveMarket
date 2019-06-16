@@ -24,5 +24,4 @@ public interface Trade extends Comparable<Trade> {
   Optional<Trade> adjust(double maxCash);
 
   String multiBuyString();
-
 }

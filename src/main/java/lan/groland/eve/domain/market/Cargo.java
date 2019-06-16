@@ -27,6 +27,8 @@ public class Cargo extends AbstractCollection<Trade> {
   @GuardedBy("this")
   private int capacity;
   
+  private double requiredCapital;
+  
   private final ShipmentSpecification specif;
 
   public Cargo(ShipmentSpecification spec){
@@ -46,7 +48,9 @@ public class Cargo extends AbstractCollection<Trade> {
   }
 
   private void popMin() {
-    capacity -= trades.poll().volume();
+    Trade removedTrade = trades.poll();
+    capacity -= removedTrade.volume();
+    requiredCapital -= removedTrade.capital();
   }
 
   public synchronized int size() {
@@ -57,6 +61,7 @@ public class Cargo extends AbstractCollection<Trade> {
     logger.info("ajout : " + t);
     trades.add(t);
     capacity += t.volume();
+    requiredCapital += t.capital();
   }
 
   public synchronized int getVolume() {
@@ -70,5 +75,9 @@ public class Cargo extends AbstractCollection<Trade> {
   @Override
   public Iterator<Trade> iterator() {
     return trades.iterator();
+  }
+
+  public synchronized double requiredCapital() {
+    return requiredCapital;
   }
 }
