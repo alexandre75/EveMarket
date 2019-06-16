@@ -86,7 +86,7 @@ public class TradeFactory {
         throw new OrderBookEmptyException(item.getItemId(), station);
       }
       return new RawTrade(item, buyPrice, sellStats, sales);
-    } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off..?
+    } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off
       logger.warn("Can't get history, ignoring :" + e.getMessage());
       throw new OrderBookEmptyException(item.getItemId(), station);
     }

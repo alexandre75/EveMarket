@@ -3,21 +3,20 @@ package lan.groland.eve.adapter.port;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpResponse.BodySubscribers;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 import org.apache.log4j.Logger;
-
-import com.google.inject.Inject;
 
 import lan.groland.eve.domain.market.EveData;
 import lan.groland.eve.domain.market.ItemId;
@@ -32,11 +31,11 @@ import lan.groland.eve.domain.market.Station.Region;
  *
  */
 public class EdsEveData implements EveData {
+  private static final Logger logger = Logger.getLogger(EdsEveData.class);
   
   private final String httpPrefix;
-  
-  @Inject
-  private static final Logger logger = Logger.getLogger(EdsEveData.class);
+
+  private final HttpClient client = HttpClient.newHttpClient();
   
   public EdsEveData(String httpPrefix) {
     this.httpPrefix = httpPrefix;
@@ -44,18 +43,27 @@ public class EdsEveData implements EveData {
 
   @Override
   public List<OrderStats> stationOrderStats(Station station) {
-    try {
-      URL url = new URL(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/book");
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-      connection.addRequestProperty("Content-Type", "application/json");
-      connection.connect();
+    URI orderStatsUri = URI.create(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/book");
+    return orders(orderStatsUri);
+  }
+
+  private List<OrderStats> orders(URI orderStatsUri) {
+    try {     
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(orderStatsUri)
+          .header("Content-Type", "application/json")
+          .build();
       
-      try (InputStream is = connection.getInputStream()){
-        OrderStatsTranslator translator = new OrderStatsTranslator(is);
-          return translator.parse();
+      HttpResponse<InputStream> is = client.send(request, BodyHandlers.ofInputStream());
+      if (is.statusCode() == 200) {
+        OrderStatsTranslator translator = new OrderStatsTranslator(is.body());
+        return translator.parse();
+      } else {
+        throw new IllegalStateException(orderStatsUri.toString() + ":" + is.statusCode());
       }
-    } catch(MalformedURLException e) {
-      throw new AssertionError(e);
+    } catch(InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new IllegalStateException(e);
     } catch(IOException e) {
       throw new UncheckedIOException(e);
     }
@@ -63,21 +71,8 @@ public class EdsEveData implements EveData {
 
   @Override
   public List<OrderStats> regionOrderStats(Region region) {
-    try {
-      URL url = new URL(httpPrefix + "/regions/" + region.getRegionId() + "/book");
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-      connection.addRequestProperty("Content-Type", "application/json");
-      connection.connect();
-      
-      try (InputStream is = connection.getInputStream()){
-        OrderStatsTranslator translator = new OrderStatsTranslator(is);
-          return translator.parse();
-      }
-    } catch(MalformedURLException e) {
-      throw new AssertionError(e);
-    } catch(IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    URI orderStatsUri = URI.create(httpPrefix + "/regions/" + region.getRegionId() + "/book");
+    return orders(orderStatsUri);
   }
 
   @Override
@@ -85,34 +80,27 @@ public class EdsEveData implements EveData {
     try {
       int error = 0;
       while (true) {
-        URL url = new URL(httpPrefix + "/regions/" +  region.getRegionId() + "/histories/" + item.typeId());
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.addRequestProperty("Content-Type", "application/json");
-        if (connection.getResponseCode() == 200) {
-          try (InputStream is = connection.getInputStream()) {
-            return parseSales(is);
-          }
-        } else if (connection.getResponseCode() == 404) { 
-          throw new IllegalArgumentException(item + ":" + new String(connection.getErrorStream().readAllBytes()));
-        } else if (connection.getResponseCode() < 500 || ++error > 3){
-          throw new IllegalStateException("Item : " + item + ", region:" + region + ", status:" + connection.getResponseCode());
+        URI url = URI.create(httpPrefix + "/regions/" +  region.getRegionId() + "/histories/" + item.typeId());
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(url)
+            .header("Content-Type", "application/json")
+            .build();
+        var response = client.send(request, resp -> resp.statusCode() == 200 ? new SalesSubscriber() 
+            : BodySubscribers.replacing((Sales)null));
+        if (response.statusCode() == 200) {
+          return response.body();
+        } else if (response.statusCode() < 500 || ++error > 3){
+          throw new IllegalStateException("Item : " + item + ", region:" + region + ", status:" + response.statusCode());
         } else {
-          logger.warn("Retrying : Item : " + item + ", region:" + region + ", status:" + connection.getResponseCode());
+          logger.warn("Retrying : Item : " + item + ", region:" + region + ", status:" + response.statusCode());
         }
       }
-    } catch(MalformedURLException e) {
-      throw new AssertionError(e);
     } catch(IOException e) {
-      throw new UncheckedIOException(e);
+      throw new UncheckedIOException(item.toString(), e);
+    } catch(InterruptedException e) {
+      Thread.interrupted();
+      throw new IllegalStateException(e);
     }
-  }
-  
-  static Sales parseSales(InputStream is) {
-    JsonReader historiesReader = Json.createReader(is);
-    JsonObject historiesObj = historiesReader.readObject();
-    Sales sales = new Sales(historiesObj.getJsonNumber("quantity").doubleValue(),
-                            historiesObj.getJsonNumber("median").doubleValue());
-    return sales;
   }
 }
 

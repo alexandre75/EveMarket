@@ -45,7 +45,7 @@ public class EdsEveDataTest {
   
   @Test
   public void testStationOrderStats() throws Exception {
-    edsMock.stubFor(get(urlPathEqualTo("/regions/10000030/stations/60004588/books"))
+    edsMock.stubFor(get(urlPathEqualTo("/regions/10000030/stations/60004588/book"))
                     .willReturn(aResponse().withBody(loadFile("stationBooks.json"))
                                            .withHeader("Content-Type", MediaType.JSON_UTF_8.toString())
                                            .withStatus(200)));
@@ -59,7 +59,7 @@ public class EdsEveDataTest {
   
   @Test
   public void testRegionOrderStats() throws Exception {
-    edsMock.stubFor(get(urlEqualTo("/traders?region_id=10000030"))
+    edsMock.stubFor(get(urlEqualTo("/regions/10000030/book"))
                     .willReturn(aResponse().withBody(loadFile("stationBooks.json"))
                                            .withHeader("Content-Type", MediaType.JSON_UTF_8.toString())
                                            .withStatus(200)));
