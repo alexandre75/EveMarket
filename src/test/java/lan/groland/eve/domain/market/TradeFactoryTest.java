@@ -29,17 +29,22 @@ class TradeFactoryTest {
 
   @Test
   void shouldAcceptTrade() throws OrderBookEmptyException {
+    /*
+     * 1 other trader at 120
+     * bought at 100
+     * 100 per day
+     * historically sold at 150
+     */
     when(eveData.regionOrderStats(any())).thenReturn(ImmutableList.of(new OrderStats(item, 1, 120D)));
     when(eveData.medianPrice(eq(item), any(), eq(100D))).thenReturn(new Sales(100, 150D));
     
     Trade trade = subject.create(new Item(item, "", 10), Station.AMARR_STATION);
     
-    assertEquals(772D, trade.benefit(), .001); // TODO verify
-    assertEquals(.5D, trade.expectedMargin(), 0.001); // TODO verify
+    assertEquals(.199D, trade.expectedMargin(), 0.001);
     assertEquals(1000, trade.volume(), 0.001);
     assertEquals(100, trade.unitSoldDay(), 0.001);
-    assertEquals(100 * 100, trade.capital(), 0.001); // XXX
-    assertEquals(772D, trade.getBenefParJour(), 0.001);
+    assertEquals(100 * 100, trade.capital(), 0.001);
+    assertEquals(772D, trade.dailyBenefit(), 0.001); // low due to sale taxes
     assertEquals(.462, trade.lastMonthMargin(), 0.001);
   }
 

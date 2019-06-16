@@ -88,7 +88,9 @@ public class EdsEveData implements EveData {
         var response = client.send(request, resp -> resp.statusCode() == 200 ? new SalesSubscriber() 
             : BodySubscribers.replacing((Sales)null));
         if (response.statusCode() == 200) {
-          return response.body();
+         return response.body();
+        } else if (response.statusCode() == 404) { 
+          throw new IllegalArgumentException(item + ":" + response.statusCode());
         } else if (response.statusCode() < 500 || ++error > 3){
           throw new IllegalStateException("Item : " + item + ", region:" + region + ", status:" + response.statusCode());
         } else {

@@ -36,7 +36,7 @@ class Config extends AbstractModule {
 
 public class Main {
   private static final Main INSTANCE = new Main();
-  private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::getBenefParJour);
+  private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::dailyBenefit);
   private static NumberFormat intFormat = NumberFormat.getIntegerInstance();
   
   @SuppressWarnings("unused")
@@ -78,7 +78,7 @@ public class Main {
     StringBuilder b = new StringBuilder("=============================================\n");
     for (Trade t : sortedTrade){
       b.append(t + "\n");
-      benef += t.getBenefParJour();
+      benef += t.dailyBenefit();
       invest += t.capital();
     }
     b.append("Benefice potentiel :" + intFormat.format(benef) + " / " + intFormat.format(invest) + ": " +NumberFormat.getPercentInstance().format(benef/invest)) ;

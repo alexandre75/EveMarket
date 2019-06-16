@@ -107,7 +107,7 @@ public class TradeFactory {
     private static final float FEE = .962f; //.95f;
 
     private Item item;
-    private double buyPrice;
+    private final double buyPrice;
     private OrderStats sellStats;
     private Sales sellHistory;
 
@@ -119,8 +119,8 @@ public class TradeFactory {
     }
 
     @Override
-    public double getBenefParJour() {
-      return Math.min(unitSoldDay()/(double)(sellStats.nbSellOrders() +1), quantiteAAcheter()) * margeUnitaire();
+    public double dailyBenefit() {
+      return dailySaleForecast() * margeUnitaire();
     }
 
     @Override
@@ -129,7 +129,8 @@ public class TradeFactory {
     }
 
     private int quantiteAAcheter() {
-      return (int) Math.ceil(unitSoldDay()/(double)(sellStats.nbSellOrders() +1));
+      // we buy for 2 day
+      return (int) Math.ceil(dailySaleForecast() * 2);
     }
 
     private double margeUnitaire() {
@@ -147,7 +148,7 @@ public class TradeFactory {
 
     @Override
     public double capital() {
-      return buyPrice * unitSoldDay();
+      return buyPrice * quantiteAAcheter();
     }
 
     @Override
@@ -157,13 +158,11 @@ public class TradeFactory {
 
     @Override
     public double expectedMargin() {
-      return sellHistory.price / buyPrice - 1;
+      return prixDeVente() / buyPrice - 1;
     }
 
-    @Override
-    public double benefit() {
-      return Math.min(unitSoldDay() / (double)(sellStats.nbSellOrders() +1), quantiteAAcheter()) 
-          * margeUnitaire();
+    private double dailySaleForecast() {
+      return unitSoldDay() / (double)(sellStats.nbSellOrders() +1);
     }
 
     @Override
@@ -190,7 +189,7 @@ public class TradeFactory {
     
     @Override
     public int compareTo(Trade other) {
-      return Double.compare(getBenefParJour(), other.getBenefParJour());
+      return Double.compare(dailyBenefit(), other.dailyBenefit());
     }
     
     @Override

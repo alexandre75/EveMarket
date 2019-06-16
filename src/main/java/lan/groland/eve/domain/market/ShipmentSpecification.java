@@ -53,7 +53,7 @@ public class ShipmentSpecification {
       return false;
     }
     
-    if (trade.benefit() < 1e6) {
+    if (trade.dailyBenefit() < 1e6) {
       return false;
     }
     

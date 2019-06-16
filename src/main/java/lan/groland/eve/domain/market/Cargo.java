@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  */
 @ThreadSafe
 public class Cargo extends AbstractCollection<Trade> {
-  private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::getBenefParJour);
+  private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::dailyBenefit);
   private static Logger logger = Logger.getLogger(Cargo.class);
   
   @GuardedBy("this")

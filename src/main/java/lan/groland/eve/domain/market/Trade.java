@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public interface Trade extends Comparable<Trade> {
 
-  double getBenefParJour();
+  double dailyBenefit();
 
   int volume();
 
@@ -15,8 +15,6 @@ public interface Trade extends Comparable<Trade> {
   double lastMonthMargin();
 
   double expectedMargin();
-
-  double benefit();
 
   /**
    * Adjust the trade so that fulfilling it does not requires more than {@code maxCash}
