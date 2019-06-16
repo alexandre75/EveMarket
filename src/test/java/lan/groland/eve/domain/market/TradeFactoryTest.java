@@ -38,14 +38,14 @@ class TradeFactoryTest {
     when(eveData.regionOrderStats(any())).thenReturn(ImmutableList.of(new OrderStats(item, 1, 120D)));
     when(eveData.medianPrice(eq(item), any(), eq(100D))).thenReturn(new Sales(100, 150D));
     
-    Trade trade = subject.create(new Item(item, "", 10), Station.AMARR_STATION);
+    Trade trade = subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F);
     
     assertEquals(.199D, trade.expectedMargin(), 0.001);
     assertEquals(1000, trade.volume(), 0.001);
     assertEquals(100, trade.unitSoldDay(), 0.001);
     assertEquals(100 * 100, trade.capital(), 0.001);
     assertEquals(772D, trade.dailyBenefit(), 0.001); // low due to sale taxes
-    assertEquals(.462, trade.lastMonthMargin(), 0.001);
+    assertEquals(.443, trade.lastMonthMargin(), 0.001);
   }
 
   @Test
@@ -55,7 +55,7 @@ class TradeFactoryTest {
     when(eveData.medianPrice(eq(item), any(), eq(100D))).thenReturn(new Sales(100, 150D));
     
     OrderBookEmptyException e = assertThrows(OrderBookEmptyException.class, 
-                                 () -> subject.create(new Item(item, "", 10), Station.AMARR_STATION));
+                                 () -> subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F));
     
     assertEquals(5, e.getItemId());
     assertEquals(Station.AMARR_STATION, e.getStation());

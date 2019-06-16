@@ -42,7 +42,7 @@ public class TradeFactory {
     try {
       Trade trade = null;
       if (isTradable(item)) {
-        trade = create(item, shipSpec.getDestination());
+        trade = create(item, shipSpec.getDestination(), shipSpec.salesTax());
         if (!shipSpec.isSatisfiedByTrade(trade)) {
           trade = null;
         }
@@ -70,7 +70,7 @@ public class TradeFactory {
    * @return the subsequent trade.
    * @throws OrderBookEmptyException
    */
-  public Trade create(Item item, Station station) throws OrderBookEmptyException {
+  public Trade create(Item item, Station station, float salesTax) throws OrderBookEmptyException {
     if (!buyPrices.containsKey(item.getItemId())) {
       throw new OrderBookEmptyException(item.getItemId(), Station.JITA);
     }
@@ -85,7 +85,7 @@ public class TradeFactory {
       if (sales.quantity == 0) {
         throw new OrderBookEmptyException(item.getItemId(), station);
       }
-      return new RawTrade(item, buyPrice, sellStats, sales);
+      return new RawTrade(item, buyPrice, sellStats, sales, salesTax);
     } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off
       logger.warn("Can't get history, ignoring :" + e.getMessage());
       throw new OrderBookEmptyException(item.getItemId(), station);
@@ -104,18 +104,18 @@ public class TradeFactory {
   }
 
   private static class RawTrade implements Trade {
-    private static final float FEE = .962f; //.95f;
-
     private Item item;
     private final double buyPrice;
     private OrderStats sellStats;
     private Sales sellHistory;
+    private float salesTax;
 
-    public RawTrade(Item item, double buyPrice, OrderStats sellStats, Sales sales) {
+    public RawTrade(Item item, double buyPrice, OrderStats sellStats, Sales sales, float salesTax) {
       this.item = item;
       this.buyPrice = buyPrice;
       this.sellHistory = sales;
       this.sellStats = sellStats;
+      this.salesTax = 1F - salesTax;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class TradeFactory {
     }
 
     private double margeUnitaire() {
-      return prixDeVente() * FEE /*taxe*/ - buyPrice;
+      return prixDeVente() * salesTax - buyPrice;
     }
 
     private double prixDeVente() {
@@ -154,7 +154,7 @@ public class TradeFactory {
 
     @Override
     public double lastMonthMargin() {
-      return (sellHistory.price * FEE - buyPrice) / buyPrice;
+      return (sellHistory.price * salesTax - buyPrice) / buyPrice;
     }
 
     @Override
@@ -180,7 +180,7 @@ public class TradeFactory {
 
       //euristic = euristic /quantitéJounalière*newQty;
       //quantitéJounalière = newQty;
-      return Optional.of(new RawTrade(item, buyPrice, sellStats, sales));
+      return Optional.of(new RawTrade(item, buyPrice, sellStats, sales, salesTax));
     }
 
     @Override

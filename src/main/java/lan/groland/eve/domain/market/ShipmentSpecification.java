@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.annotation.concurrent.Immutable;
 
+import com.google.common.base.Preconditions;
+
 /**
  * This class constraints shipments. They contain all the information the shipment
  * must verify such as destination, cash, trading slots etc.
@@ -22,6 +24,7 @@ public class ShipmentSpecification {
   private final int maxSize;
   private final Station destination;
   private final double cashAvailable;
+  private final float salesTax;
 
   private ShipmentSpecification(Builder builder) {
     super();
@@ -30,6 +33,7 @@ public class ShipmentSpecification {
     this.destination = builder.destination;
     maxSize = builder.maxSize;
     cashAvailable = builder.cashAvailable;
+    salesTax = builder.salesTax ;
   }
 
   public boolean isSatisfiedBy(Item item) {
@@ -78,6 +82,7 @@ public class ShipmentSpecification {
   }
 
   public static class Builder {
+    private float salesTax = .05F;
     private final double cashAvailable;
     private int maxVolume = 320_000;
     private Set<Integer> alreadyBought = Collections.emptySet();
@@ -119,9 +124,24 @@ public class ShipmentSpecification {
       this.maxSize = tradingSlot;
       return this;
     }
+    
+    /**
+     * Sets the tax rate which will be applied on the destination station
+     * @param salesTax a tax rate 0.05 = 5%
+     * @throws IllegalArgumentException if tax > 0 or < 100%
+     */
+    public Builder salesTax(float salesTax) throws IllegalArgumentException {
+      Preconditions.checkArgument(salesTax >= 0 && salesTax < 1, "salesTax : " + salesTax);
+      this.salesTax = salesTax;
+      return this;
+    }
  
     public ShipmentSpecification build() {
       return new ShipmentSpecification(this);
     }
+  }
+
+  public float salesTax() {
+    return salesTax;
   }
 }
