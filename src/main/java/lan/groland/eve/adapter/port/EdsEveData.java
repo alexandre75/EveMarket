@@ -15,6 +15,10 @@ import javax.json.JsonReader;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
+import org.apache.log4j.Logger;
+
+import com.google.inject.Inject;
+
 import lan.groland.eve.domain.market.EveData;
 import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.OrderStats;
@@ -31,6 +35,9 @@ public class EdsEveData implements EveData {
   
   private final String httpPrefix;
   
+  @Inject
+  private static final Logger logger = Logger.getLogger(EdsEveData.class);
+  
   public EdsEveData(String httpPrefix) {
     this.httpPrefix = httpPrefix;
   }
@@ -39,7 +46,11 @@ public class EdsEveData implements EveData {
   public List<OrderStats> stationOrderStats(Station station) {
     try {
       URL url = new URL(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/books");
-      try (InputStream is = url.openStream()){
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.addRequestProperty("Content-Type", "application/json");
+      connection.connect();
+      
+      try (InputStream is = connection.getInputStream()){
         OrderStatsTranslator translator = new OrderStatsTranslator(is);
           return translator.parse();
       }
@@ -54,7 +65,11 @@ public class EdsEveData implements EveData {
   public List<OrderStats> regionOrderStats(Region region) {
     try {
       URL url = new URL(httpPrefix + "/traders?region_id=" + region.getRegionId());
-      try (InputStream is = url.openStream()){
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.addRequestProperty("Content-Type", "application/json");
+      connection.connect();
+      
+      try (InputStream is = connection.getInputStream()){
         OrderStatsTranslator translator = new OrderStatsTranslator(is);
           return translator.parse();
       }
@@ -68,14 +83,22 @@ public class EdsEveData implements EveData {
   @Override
   public Sales medianPrice(ItemId item, Region region, double buyPrice) {
     try {
-      URL url = new URL(httpPrefix + "/regions/" +  region.getRegionId() + "/histories/" + item.typeId());
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-      if (connection.getResponseCode() == 200) {
-        try (InputStream is = connection.getInputStream()) {
-          return parseSales(is);
+      int error = 0;
+      while (true) {
+        URL url = new URL(httpPrefix + "/regions/" +  region.getRegionId() + "/histories/" + item.typeId());
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.addRequestProperty("Content-Type", "application/json");
+        if (connection.getResponseCode() == 200) {
+          try (InputStream is = connection.getInputStream()) {
+            return parseSales(is);
+          }
+        } else if (connection.getResponseCode() == 404) { 
+          throw new IllegalArgumentException(item + ":" + new String(connection.getErrorStream().readAllBytes()));
+        } else if (connection.getResponseCode() < 500 || ++error > 3){
+          throw new IllegalStateException("Item : " + item + ", region:" + region + ", status:" + connection.getResponseCode());
+        } else {
+          logger.warn("Retrying : Item : " + item + ", region:" + region + ", status:" + connection.getResponseCode());
         }
-      } else {
-        throw new IllegalStateException("Item : " + item + ", region:" + region);
       }
     } catch(MalformedURLException e) {
       throw new AssertionError(e);
