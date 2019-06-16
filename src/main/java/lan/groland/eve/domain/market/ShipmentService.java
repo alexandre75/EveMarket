@@ -16,7 +16,7 @@ import com.google.inject.Inject;
  */
 public class ShipmentService {
   @SuppressWarnings("unused")
-  private static Logger log = Logger.getLogger(ShipmentService.class);
+  private static Logger logger = Logger.getLogger(ShipmentService.class);
 
   private final EveData eveData;
   private final ItemRepository itemRepository;
@@ -42,6 +42,7 @@ public class ShipmentService {
    * @see ShipmentSpecification
    */
   public Collection<Trade> optimizeCargo(ShipmentSpecification shipSpec) {
+    logger.info("Loading items for sale and pre filtering");
     List<Item> items =  eveData.stationOrderStats(Station.JITA)
                                .stream().filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
                                .map(os -> itemRepository.find(os.getItem()))
@@ -62,6 +63,7 @@ public class ShipmentService {
    * @see ShipmentSpecification
    */
   public Collection<Trade> load(Collection<Item> items, ShipmentSpecification shipSpec) {
+    logger.info("Optimizing the cargo");
     Cargo trades = new Cargo(shipSpec); 
     items.parallelStream()
          .filter(shipSpec::isSatisfiedBy)

@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toMap;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
+import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 
 import lan.groland.eve.domain.market.Station.Region;
@@ -179,6 +180,16 @@ public class TradeFactory {
     @Override
     public int compareTo(Trade other) {
       return Double.compare(getBenefParJour(), other.getBenefParJour());
+    }
+    
+    @Override
+    public String toString() {
+      return MoreObjects.toStringHelper(TradeFactory.class)
+                        .add("item", item.getName())
+                        .add("qty", this.quantiteAAcheter())
+                        .add("buy", this.buyPrice)
+                        .add("sell", this.prixDeVente())
+                        .toString();
     }
   }
 }
