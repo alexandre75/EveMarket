@@ -138,12 +138,13 @@ public class TradeFactory {
     }
 
     private double prixDeVente() {
+      // we probably wont make more than 50%
       return ((sellStats.getBid() < Float.MAX_VALUE)? sellStats.getBid() : buyPrice * 1.5D);
     }
 
     @Override
-    public int volume() {
-      return (int) Math.round(unitSoldDay() * item.getVolume());
+    public double volume() {
+      return quantiteAAcheter() * item.getVolume();
     }
 
     @Override
@@ -153,7 +154,7 @@ public class TradeFactory {
 
     @Override
     public double lastMonthMargin() {
-      return (sellHistory.price * .975D /*taxe*/ - buyPrice) / buyPrice;
+      return (sellHistory.price * FEE - buyPrice) / buyPrice;
     }
 
     @Override

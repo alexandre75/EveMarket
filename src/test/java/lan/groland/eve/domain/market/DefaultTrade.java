@@ -17,7 +17,7 @@ public class DefaultTrade implements Trade {
   }
 
   @Override
-  public int volume() {
+  public double volume() {
     return 0;
   }
 

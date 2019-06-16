@@ -21,8 +21,8 @@ class CargoTest {
     
     newTrade = new DefaultTrade() {
       @Override
-      public int volume() {
-        return 500;
+      public double volume() {
+        return 500D;
       }
       
       @Override

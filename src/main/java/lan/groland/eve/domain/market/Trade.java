@@ -6,7 +6,7 @@ public interface Trade extends Comparable<Trade> {
 
   double dailyBenefit();
 
-  int volume();
+  double volume();
 
   double capital();
 
