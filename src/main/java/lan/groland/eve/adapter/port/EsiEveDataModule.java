@@ -6,7 +6,6 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 

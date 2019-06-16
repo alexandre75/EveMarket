@@ -9,6 +9,8 @@ import java.util.Queue;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 
+import org.apache.log4j.Logger;
+
 /**
  * List des meilleurs trades
  * @author alexandre
@@ -17,6 +19,7 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public class Cargo extends AbstractCollection<Trade> {
   private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::getBenefParJour);
+  private static Logger logger = Logger.getLogger(Cargo.class);
   
   @GuardedBy("this")
   private final Queue<Trade> trades = new PriorityQueue<Trade>(TRADE_COMPARATOR);
@@ -51,7 +54,7 @@ public class Cargo extends AbstractCollection<Trade> {
   }
   
   private void addTrade(Trade t){
-    System.out.println("ajout : " + t);
+    logger.info("ajout : " + t);
     trades.add(t);
     capacity += t.volume();
   }
