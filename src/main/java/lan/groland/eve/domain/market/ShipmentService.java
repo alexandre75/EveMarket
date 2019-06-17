@@ -1,9 +1,8 @@
 package lan.groland.eve.domain.market;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
@@ -43,10 +42,9 @@ public class ShipmentService {
    */
   public Collection<Trade> optimizeCargo(ShipmentSpecification shipSpec) {
     logger.info("Loading items for sale and pre filtering");
-    List<Item> items =  eveData.stationOrderStats(Station.JITA)
-                               .stream().filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
-                               .map(os -> itemRepository.find(os.getItem()))
-                               .collect(Collectors.toList());
+    Stream<Item> items =  eveData.stationOrderStats(Station.JITA)
+                               .parallelStream().filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
+                               .map(os -> itemRepository.find(os.getItem()));
     return load(items, shipSpec);
   }
   
@@ -62,11 +60,10 @@ public class ShipmentService {
    * @return an optimized cargo
    * @see ShipmentSpecification
    */
-  public Collection<Trade> load(Collection<Item> items, ShipmentSpecification shipSpec) {
+  public Collection<Trade> load(Stream<Item> stream, ShipmentSpecification shipSpec) {
     logger.info("Optimizing the cargo");
     Cargo trades = new Cargo(shipSpec); 
-    items.parallelStream()
-         .filter(shipSpec::isSatisfiedBy)
+    stream.filter(shipSpec::isSatisfiedBy)
          .map(item -> tradeFactory.createOptional(item, shipSpec))
          .flatMap(Optional::stream)
          .map(trade -> trade.adjust(shipSpec.cashAvailable() / (double) shipSpec.tradingSlots()))

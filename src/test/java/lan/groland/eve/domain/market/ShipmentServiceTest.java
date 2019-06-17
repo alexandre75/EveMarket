@@ -41,7 +41,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(items, specs);
+    Collection<Trade> trades = subject.load(items.stream(), specs);
     
     assertEquals(1000, trades.size());
   }
@@ -56,7 +56,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(items, specs);
+    Collection<Trade> trades = subject.load(items.stream(), specs);
     
     assertEquals(30, trades.size());
   }
@@ -70,7 +70,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.empty());
     
-    Collection<Trade> trades = subject.load(items, specs);
+    Collection<Trade> trades = subject.load(items.stream(), specs);
     
     assertEquals(0, trades.size());
   }
@@ -84,7 +84,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.empty());
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(items, specs);
+    Collection<Trade> trades = subject.load(items.stream(), specs);
     
     assertEquals(0, trades.size());
   }
