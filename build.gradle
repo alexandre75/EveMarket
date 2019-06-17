@@ -29,9 +29,6 @@ dependencies {
     compile 'com.google.inject:guice:4.2.2'
     compile 'log4j:log4j:1.2.17'
     compile 'org.mongodb:mongo-java-driver:3.10.2'
-    compile 'org.threeten:threetenbp:1.4.0'
-    compile 'swagger-java-client:swagger-java-client-1.0.0'
-    // https://mvnrepository.com/artifact/javax.json/javax.json-api
 	compile 'javax.json:javax.json-api:1.1.4'
 	compile 'org.glassfish:javax.json:1.1.4'
 	

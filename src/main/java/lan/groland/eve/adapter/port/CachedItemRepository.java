@@ -2,7 +2,18 @@ package lan.groland.eve.adapter.port;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.lang.ref.Cleaner;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -12,9 +23,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Indexes;
 
-import io.swagger.client.ApiException;
-import io.swagger.client.api.UniverseApi;
-import io.swagger.client.model.GetUniverseTypesTypeIdOk;
 import lan.groland.eve.domain.market.Item;
 import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.ItemRepository;
@@ -99,16 +107,27 @@ class MongoItemRepository implements ItemRepository, AutoCloseable {
  *
  */
 class EveItemRepository implements ItemRepository {
-  private UniverseApi univers = new UniverseApi();
+  
+  private final HttpClient client = HttpClient.newHttpClient();
   
   @Override
   public Item find(ItemId id) {
-    GetUniverseTypesTypeIdOk info;
-    while(true){
+    URI uri = URI.create("https://esi.evetech.net/latest/universe/types/" + id.typeId());
+    HttpRequest typeRequest = HttpRequest.newBuilder(uri)
+        .header("Content-Type", "application/json")
+        .build();
+    while(true) {
       try {
-        info = univers.getUniverseTypesTypeId(id.typeId(), null, null, null, null, null);
-        return new Item(id.typeId(), info.getName(), info.getVolume());
-      } catch(ApiException e){
+      HttpResponse<String> resp = client.send(typeRequest, BodyHandlers.ofString());
+      if (resp.statusCode() == 200) {
+        JsonReader jsonReader = Json.createReader(new StringReader(resp.body()));
+        JsonObject typeObj = jsonReader.readObject();
+        return new Item(id.typeId(), typeObj.getString("name"), typeObj.getJsonNumber("volume").doubleValue());
+      }
+      } catch(InterruptedException e) {
+        throw new IllegalStateException(e);
+      } catch(IOException ignored) {
+        // was working with previous code
       }
     }
   }

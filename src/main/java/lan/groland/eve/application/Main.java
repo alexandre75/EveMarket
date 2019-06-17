@@ -20,7 +20,6 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.name.Names;
 
-import io.swagger.client.ApiException;
 import lan.groland.eve.adapter.port.EsiEveDataModule;
 import lan.groland.eve.domain.market.ShipmentService;
 import lan.groland.eve.domain.market.ShipmentSpecification;

@@ -2,12 +2,9 @@ package lan.groland.eve.domain.market;
 
 import java.util.Objects;
 
-import org.threeten.bp.LocalDateTime;
-
 import com.google.common.base.Preconditions;
 
 public class OrderStats {
-  private static LocalDateTime yesterday = LocalDateTime.now().minusDays(2);
   private int nbAsks;
   private float ask;
 
@@ -45,13 +42,6 @@ public class OrderStats {
   public void newBuy(Double price) {
     nbAsks++;
     ask = (float)Math.max(ask, price);
-  }
-
-  public void newSell(Double price, LocalDateTime offsetDateTime) {
-    if (offsetDateTime.compareTo(yesterday) >= 0){
-      nbTraders++;
-    }
-    bid = (float) Math.min(bid, price);
   }
 
   public ItemId getItem() {
