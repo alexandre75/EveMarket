@@ -76,14 +76,17 @@ public class Main {
   public static String toString(Collection<Trade> trades){
     List<Trade> sortedTrade = new ArrayList<>(trades);
     Collections.sort(sortedTrade, TRADE_COMPARATOR);
-    float benef = 0, invest = 0;
+    float dailyBenef = 0, invest = 0;
+    double benef = 0;
     StringBuilder b = new StringBuilder("=============================================\n");
     for (Trade t : sortedTrade){
       b.append(t + "\n");
-      benef += t.dailyBenefit();
+      dailyBenef += t.dailyBenefit();
       invest += t.capital();
+      benef += t.capital() * t.expectedMargin();
     }
     b.append("Benefice potentiel :" + intFormat.format(benef) + " / " + intFormat.format(invest) + ": " +NumberFormat.getPercentInstance().format(benef/invest)) ;
+    b.append("\nDaily benefit      :" + intFormat.format(dailyBenef));
     return b.toString();
   }
 
