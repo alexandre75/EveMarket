@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import io.reactivex.Flowable;
 
 import static org.mockito.Mockito.*;
 
@@ -41,7 +42,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(items.stream(), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
     
     assertEquals(1000, trades.size());
   }
@@ -56,7 +57,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(items.stream(), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
     
     assertEquals(30, trades.size());
   }
@@ -70,7 +71,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.empty());
     
-    Collection<Trade> trades = subject.load(items.stream(), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
     
     assertEquals(0, trades.size());
   }
@@ -84,7 +85,7 @@ class ShipmentServiceTest {
     when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.empty());
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(items.stream(), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
     
     assertEquals(0, trades.size());
   }
@@ -92,7 +93,7 @@ class ShipmentServiceTest {
   @Test
   void shouldPassOptimize() {
     Iterator<Item> iter = items().iterator();
-    when(eveData.stationOrderStats(any())).thenReturn(Collections.singletonList(new OrderStats(new ItemId(3), 4, 9D)));
+    when(eveData.stationOrderStatsAsync(any())).thenReturn(Flowable.just(new OrderStats(new ItemId(3), 4, 9D)));
     when(specs.cashAvailable()).thenReturn(1000D);
     when(itemRepo.find(any())).thenReturn(iter.next());
     when(specs.isSatisfiedBy(any())).thenReturn(true);

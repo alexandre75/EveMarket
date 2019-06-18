@@ -34,15 +34,16 @@ public class TradeFactory {
   @Inject
   TradeFactory(EveData eveData) {
     this.eveData = eveData;
-    buyPrices = eveData.stationOrderStats(Station.JITA).stream()
-                       .collect(toMap(OrderStats::getItem, OrderStats::getBid));
+    buyPrices = eveData.stationOrderStatsAsync(Station.JITA)
+        .toMap(OrderStats::getItem, OrderStats::getBid)
+        .blockingGet();
   }
   
   public Optional<Trade> createOptional(Item item, ShipmentSpecification shipSpec) {
     try {
       Trade trade = null;
       if (isTradable(item)) {
-        trade = create(item, shipSpec.getDestination(), shipSpec.salesTax());
+        trade = create(item, shipSpec);
         if (!shipSpec.isSatisfiedByTrade(trade)) {
           trade = null;
         }
@@ -70,26 +71,8 @@ public class TradeFactory {
    * @return the subsequent trade.
    * @throws OrderBookEmptyException
    */
-  public Trade create(Item item, Station station, float salesTax) throws OrderBookEmptyException {
-    if (!buyPrices.containsKey(item.getItemId())) {
-      throw new OrderBookEmptyException(item.getItemId(), Station.JITA);
-    }
-    double buyPrice = buyPrices.get(item.getItemId());
-    
-    OrderStats sellStats = getDestination(station.getRegion()).get(item.getItemId());
-    if (sellStats == null) {
-      throw new OrderBookEmptyException(item.getItemId(), station);
-    }
-    try {
-      Sales sales = eveData.medianPrice(item.getItemId(), station.getRegion(), buyPrice);
-      if (sales.quantity == 0) {
-        throw new OrderBookEmptyException(item.getItemId(), station);
-      }
-      return new RawTrade(item, buyPrice, sellStats, sales, salesTax);
-    } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off
-      logger.warn("Can't get history, ignoring :" + e.getMessage());
-      throw new OrderBookEmptyException(item.getItemId(), station);
-    }
+  public Trade create(Item item, ShipmentSpecification spec) throws OrderBookEmptyException {
+   return create(item, spec.getDestination(), spec.salesTax());
   }
   
   private synchronized Map<ItemId, OrderStats> getDestination(Region region){
@@ -201,6 +184,40 @@ public class TradeFactory {
     @Override
     public Item item() {
       return item;
+    }
+  }
+
+  /**
+   * Calculate financial data we could expect by shipping the given item the {@code destination}.
+   * <ul>
+   * <li>Load order books for origin and destination station;
+   * <li>Calculate possible selling price and volume
+   * <li>Derive the financial data characterizing the trade.
+   * <ul>
+   * @param item the item bought at Jita
+   * @param station item is sold at "sell" price in this station.
+   * @return the subsequent trade.
+   * @throws OrderBookEmptyException
+   */
+  public Trade create(Item item, Station station, float salesTax) throws OrderBookEmptyException {
+    if (!buyPrices.containsKey(item.getItemId())) {
+      throw new OrderBookEmptyException(item.getItemId(), Station.JITA);
+    }
+    double buyPrice = buyPrices.get(item.getItemId());
+    
+    OrderStats sellStats = getDestination(station.getRegion()).get(item.getItemId());
+    if (sellStats == null) {
+      throw new OrderBookEmptyException(item.getItemId(), station);
+    }
+    try {
+      Sales sales = eveData.medianPrice(item.getItemId(), station.getRegion(), buyPrice);
+      if (sales.quantity == 0) {
+        throw new OrderBookEmptyException(item.getItemId(), station);
+      }
+      return new RawTrade(item, buyPrice, sellStats, sales, salesTax);
+    } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off
+      logger.warn("Can't get history, ignoring :" + e.getMessage());
+      throw new OrderBookEmptyException(item.getItemId(), station);
     }
   }
 }

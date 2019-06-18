@@ -2,11 +2,13 @@ package lan.groland.eve.domain.market;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
+
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Shipment optimization services
@@ -42,9 +44,10 @@ public class ShipmentService {
    */
   public Collection<Trade> optimizeCargo(ShipmentSpecification shipSpec) {
     logger.info("Loading items for sale and pre filtering");
-    Stream<Item> items =  eveData.stationOrderStats(Station.JITA)
-                               .parallelStream().filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
-                               .map(os -> itemRepository.find(os.getItem()));
+    Flowable<Item> items = eveData.stationOrderStatsAsync(Station.JITA)
+        .observeOn(Schedulers.io())
+        .filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
+        .flatMap(os -> itemRepository.findAsync(os.getItem()));
     return load(items, shipSpec);
   }
   
@@ -60,15 +63,16 @@ public class ShipmentService {
    * @return an optimized cargo
    * @see ShipmentSpecification
    */
-  public Collection<Trade> load(Stream<Item> stream, ShipmentSpecification shipSpec) {
+  public Collection<Trade> load(Flowable<Item> items, ShipmentSpecification shipSpec) {
     logger.info("Optimizing the cargo");
-    Cargo trades = new Cargo(shipSpec); 
-    stream.filter(shipSpec::isSatisfiedBy)
+    Cargo trades = new Cargo(shipSpec);
+    items.filter(shipSpec::isSatisfiedBy)
          .map(item -> tradeFactory.createOptional(item, shipSpec))
-         .flatMap(Optional::stream)
-         .map(trade -> trade.adjust(shipSpec.cashAvailable() / (double) shipSpec.tradingSlots()))
-         .flatMap(Optional::stream)
-         .forEach(trades::add);
+         .filter(Optional::isPresent)
+         .map(trade -> trade.get().adjust(shipSpec.cashAvailable() / (double) shipSpec.tradingSlots()))
+         .filter(Optional::isPresent)
+         .map(Optional::get)
+         .blockingSubscribe(trades::add);
     return trades;
   }
 }

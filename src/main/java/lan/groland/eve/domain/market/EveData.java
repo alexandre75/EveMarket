@@ -2,6 +2,7 @@ package lan.groland.eve.domain.market;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import lan.groland.eve.domain.market.Station.Region;
 
 /**
@@ -10,13 +11,13 @@ import lan.groland.eve.domain.market.Station.Region;
  *
  */
 public interface EveData {
-
+  
   /**
    * Returns a summary of the order book in the given station
    * @param station a station
    */
-  List<OrderStats> stationOrderStats(Station station);
-  
+  Flowable<OrderStats> stationOrderStatsAsync(Station station);
+
   /**
    * Returns a summary of the order book for a given id and region.
    * @param item the item of interest
@@ -32,4 +33,10 @@ public interface EveData {
    * @param buyPrice price at which we intend to buy the item.
    */
   Sales medianPrice(ItemId item, Region region, double buyPrice);
+
+  default List<OrderStats> stationOrderStats(Station jita) {
+    return stationOrderStatsAsync(jita).toList().blockingGet();
+  }
+
+  Flowable<Sales> medianPriceAsync(ItemId item, Region region, double buyPrice);
 }

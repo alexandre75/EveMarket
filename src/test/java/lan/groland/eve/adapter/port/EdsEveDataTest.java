@@ -6,20 +6,23 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.number.IsCloseTo.closeTo;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.hamcrest.number.IsCloseTo.closeTo;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Publisher;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.net.MediaType;
 
+import io.reactivex.Flowable;
+import lan.groland.eve.domain.market.EveData;
 import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.OrderStats;
 import lan.groland.eve.domain.market.Sales;
@@ -31,7 +34,7 @@ public class EdsEveDataTest {
   @Rule
   public WireMockRule edsMock = new WireMockRule(8089);
 
-  private EdsEveData subject = new EdsEveData("http://localhost:8089");
+  private EveData subject = new EdsEveData("http://localhost:8089");
 
   @BeforeEach
   void setup() {
@@ -50,9 +53,9 @@ public class EdsEveDataTest {
                                            .withHeader("Content-Type", MediaType.JSON_UTF_8.toString())
                                            .withStatus(200)));
 
-    List<OrderStats> result = subject.stationOrderStats(Station.RENS_STATION);
+    Publisher<OrderStats> publisher = subject.stationOrderStatsAsync(Station.RENS_STATION);
     OrderStats expectedStats = new OrderStats(new ItemId(1319), 4, 386900D);
-
+    List<OrderStats> result = Flowable.fromPublisher(publisher).toList().blockingGet();
     assertThat(result.size(), equalTo(6233));
     assertThat(result.get(0), equalTo(expectedStats));
   }

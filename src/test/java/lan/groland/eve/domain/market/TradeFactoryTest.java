@@ -13,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 
 import com.google.common.collect.ImmutableList;
 
+import io.reactivex.Flowable;
+
 class TradeFactoryTest {
   
   @Mock private EveData eveData;
@@ -23,7 +25,7 @@ class TradeFactoryTest {
   @BeforeEach
   void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
-    when(eveData.stationOrderStats(Station.JITA)).thenReturn(ImmutableList.of(new OrderStats(item, 0, 100D)));
+    when(eveData.stationOrderStatsAsync(Station.JITA)).thenReturn(Flowable.just(new OrderStats(item, 0, 100D)));
     subject = new TradeFactory(eveData);
   }
 

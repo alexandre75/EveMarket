@@ -11,13 +11,16 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.net.http.HttpResponse.BodySubscribers;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Flow.Publisher;
 
 import javax.json.Json;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
 import org.apache.log4j.Logger;
+import org.reactivestreams.FlowAdapters;
 
+import io.reactivex.Flowable;
 import lan.groland.eve.domain.market.EveData;
 import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.OrderStats;
@@ -40,14 +43,14 @@ public class EdsEveData implements EveData {
   public EdsEveData(String httpPrefix) {
     this.httpPrefix = httpPrefix;
   }
-
+  
   @Override
-  public List<OrderStats> stationOrderStats(Station station) {
+  public Flowable<OrderStats> stationOrderStatsAsync(Station station) {
     URI orderStatsUri = URI.create(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/book");
-    return orders(orderStatsUri);
+    return Flowable.fromPublisher(FlowAdapters.toPublisher(ordersAsync(orderStatsUri)));
   }
 
-  private List<OrderStats> orders(URI orderStatsUri) {
+  private Publisher<OrderStats> ordersAsync(URI orderStatsUri) {
     try {     
       HttpRequest request = HttpRequest.newBuilder()
           .uri(orderStatsUri)
@@ -56,8 +59,7 @@ public class EdsEveData implements EveData {
       
       HttpResponse<InputStream> is = client.send(request, BodyHandlers.ofInputStream());
       if (is.statusCode() == 200) {
-        OrderStatsTranslator translator = new OrderStatsTranslator(is.body());
-        return translator.parse();
+        return new JsonStatOrderParser(is.body());
       } else {
         throw new IllegalStateException(orderStatsUri.toString() + ":" + is.statusCode());
       }
@@ -68,13 +70,20 @@ public class EdsEveData implements EveData {
       throw new UncheckedIOException(e);
     }
   }
+  
 
   @Override
   public List<OrderStats> regionOrderStats(Region region) {
     URI orderStatsUri = URI.create(httpPrefix + "/regions/" + region.getRegionId() + "/book");
-    return orders(orderStatsUri);
+    return Flowable.fromPublisher(FlowAdapters.toPublisher(ordersAsync(orderStatsUri)))
+                   .toList().blockingGet();
   }
 
+  @Override
+  public Flowable<Sales> medianPriceAsync(ItemId item, Region region, double buyPrice) {
+    return Flowable.fromCallable(() -> medianPrice(item, region, buyPrice));
+  }
+  
   @Override
   public Sales medianPrice(ItemId item, Region region, double buyPrice) {
     try {
