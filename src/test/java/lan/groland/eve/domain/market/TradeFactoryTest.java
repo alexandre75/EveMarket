@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import com.google.common.collect.ImmutableList;
 
 import io.reactivex.Flowable;
+import io.reactivex.subscribers.TestSubscriber;
 
 class TradeFactoryTest {
   
@@ -38,9 +39,9 @@ class TradeFactoryTest {
      * historically sold at 150
      */
     when(eveData.regionOrderStats(any())).thenReturn(ImmutableList.of(new OrderStats(item, 1, 120D)));
-    when(eveData.medianPrice(eq(item), any(), eq(100D))).thenReturn(new Sales(100, 150D));
+    when(eveData.medianPriceAsync(eq(item), any(), eq(100D))).thenReturn(Flowable.just(new Sales(100, 150D)));
     
-    Trade trade = subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F);
+    Trade trade = subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F).blockingFirst();
     
     assertEquals(.199D, trade.expectedMargin(), 0.001);
     assertEquals(1000, trade.volume(), 0.001);
@@ -54,12 +55,12 @@ class TradeFactoryTest {
   void shouldThrowException() {
     ItemId item = new ItemId(5);
     when(eveData.regionOrderStats(any())).thenReturn(Collections.emptyList());
-    when(eveData.medianPrice(eq(item), any(), eq(100D))).thenReturn(new Sales(100, 150D));
+    when(eveData.medianPriceAsync(eq(item), any(), eq(100D))).thenReturn(Flowable.just(new Sales(100, 150D)));
     
-    OrderBookEmptyException e = assertThrows(OrderBookEmptyException.class, 
-                                 () -> subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F));
-    
-    assertEquals(5, e.getItemId());
-    assertEquals(Station.AMARR_STATION, e.getStation());
+    TestSubscriber<Trade> subscriber = new TestSubscriber<>();
+    subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F).subscribe(subscriber);
+    subscriber.assertError(OrderBookEmptyException.class);
+    subscriber.assertError(e -> ((OrderBookEmptyException) e).getItemId() == 5);
+    subscriber.assertError(e -> ((OrderBookEmptyException) e).getStation() == Station.AMARR_STATION);
   }
 }

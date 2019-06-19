@@ -38,8 +38,8 @@ class ShipmentServiceTest {
     List<Item> items = items();
     when(specs.isSatisfiedBy(any())).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
-    
-    when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
+    when(specs.isSatisfiedByTrade(any())).thenReturn(true);
+    when(tradeFactory.create(any(), any())).thenReturn(Flowable.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
     Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
@@ -53,8 +53,8 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedBy(any())).thenReturn(false);
     when(specs.isSatisfiedBy(argThat(item -> item.getItemId().typeId() < 30))).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
-    
-    when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
+    when(specs.isSatisfiedByTrade(any())).thenReturn(true);
+    when(tradeFactory.create(any(), any())).thenReturn(Flowable.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
     Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
@@ -68,7 +68,7 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedBy(any())).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
     
-    when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
+    when(tradeFactory.create(any(), any())).thenReturn(Flowable.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.empty());
     
     Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
@@ -82,7 +82,7 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedBy(any())).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
     
-    when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.empty());
+    when(tradeFactory.create(any(), any())).thenReturn(Flowable.empty());
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
     Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
@@ -95,11 +95,12 @@ class ShipmentServiceTest {
     Iterator<Item> iter = items().iterator();
     when(eveData.stationOrderStatsAsync(any())).thenReturn(Flowable.just(new OrderStats(new ItemId(3), 4, 9D)));
     when(specs.cashAvailable()).thenReturn(1000D);
-    when(itemRepo.find(any())).thenReturn(iter.next());
+    when(itemRepo.findAsync(any())).thenReturn(Flowable.just(iter.next()));
     when(specs.isSatisfiedBy(any())).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
+    when(specs.isSatisfiedByTrade(any())).thenReturn(true);
     
-    when(tradeFactory.createOptional(any(), any())).thenReturn(Optional.of(mockTrade1));
+    when(tradeFactory.create(any(), any())).thenReturn(Flowable.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
     Collection<Trade> trades = subject.optimizeCargo(specs);

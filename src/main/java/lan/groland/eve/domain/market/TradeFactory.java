@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 
+import io.reactivex.Flowable;
+import io.reactivex.functions.Function;
 import lan.groland.eve.domain.market.Station.Region;
 
 /**
@@ -39,26 +41,6 @@ public class TradeFactory {
         .blockingGet();
   }
   
-  public Optional<Trade> createOptional(Item item, ShipmentSpecification shipSpec) {
-    try {
-      Trade trade = null;
-      if (isTradable(item)) {
-        trade = create(item, shipSpec);
-        if (!shipSpec.isSatisfiedByTrade(trade)) {
-          trade = null;
-        }
-      }
-      return Optional.ofNullable(trade);
-    } catch(OrderBookEmptyException e) {
-      return Optional.empty();
-    }
-  }
-
-  private boolean isTradable(Item item) {
-    // TODO implements item filter in order to avoid exception
-    return true;
-  }
-  
   /**
    * Calculate financial data we could expect by shipping the given item the {@code destination}.
    * <ul>
@@ -71,7 +53,7 @@ public class TradeFactory {
    * @return the subsequent trade.
    * @throws OrderBookEmptyException
    */
-  public Trade create(Item item, ShipmentSpecification spec) throws OrderBookEmptyException {
+  public Flowable<Trade> create(Item item, ShipmentSpecification spec) {
    return create(item, spec.getDestination(), spec.salesTax());
   }
   
@@ -199,25 +181,31 @@ public class TradeFactory {
    * @return the subsequent trade.
    * @throws OrderBookEmptyException
    */
-  public Trade create(Item item, Station station, float salesTax) throws OrderBookEmptyException {
+  public Flowable<Trade> create(Item item, Station station, float salesTax) {
     if (!buyPrices.containsKey(item.getItemId())) {
-      throw new OrderBookEmptyException(item.getItemId(), Station.JITA);
+      return Flowable.error(new OrderBookEmptyException(item.getItemId(), Station.JITA));
     }
     double buyPrice = buyPrices.get(item.getItemId());
     
     OrderStats sellStats = getDestination(station.getRegion()).get(item.getItemId());
     if (sellStats == null) {
-      throw new OrderBookEmptyException(item.getItemId(), station);
+      return Flowable.error(new OrderBookEmptyException(item.getItemId(), station));
     }
-    try {
-      Sales sales = eveData.medianPrice(item.getItemId(), station.getRegion(), buyPrice);
-      if (sales.quantity == 0) {
-        throw new OrderBookEmptyException(item.getItemId(), station);
-      }
-      return new RawTrade(item, buyPrice, sellStats, sales, salesTax);
-    } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off
-      logger.warn("Can't get history, ignoring :" + e.getMessage());
-      throw new OrderBookEmptyException(item.getItemId(), station);
-    }
+
+    return eveData.medianPriceAsync(item.getItemId(), station.getRegion(), buyPrice)
+        .map(new Function<Sales, Trade>() {
+          @Override
+          public Trade apply(Sales sales) throws Exception {
+            try {
+              if (sales.quantity == 0D){
+                throw new OrderBookEmptyException(item.getItemId(), station);
+              }
+              return new RawTrade(item, buyPrice, sellStats, sales, salesTax);
+            } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off
+              logger.warn("Can't get history, ignoring :" + e.getMessage());
+              throw new OrderBookEmptyException(item.getItemId(), station);
+            }
+          }
+        });
   }
 }

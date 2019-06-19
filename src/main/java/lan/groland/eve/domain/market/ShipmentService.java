@@ -67,9 +67,9 @@ public class ShipmentService {
     logger.info("Optimizing the cargo");
     Cargo trades = new Cargo(shipSpec);
     items.filter(shipSpec::isSatisfiedBy)
-         .map(item -> tradeFactory.createOptional(item, shipSpec))
-         .filter(Optional::isPresent)
-         .map(trade -> trade.get().adjust(shipSpec.cashAvailable() / (double) shipSpec.tradingSlots()))
+         .flatMap(item -> tradeFactory.create(item, shipSpec).onExceptionResumeNext(Flowable.empty()))
+         .filter(shipSpec::isSatisfiedByTrade)
+         .map(trade -> trade.adjust(shipSpec.cashAvailable() / (double) shipSpec.tradingSlots()))
          .filter(Optional::isPresent)
          .map(Optional::get)
          .blockingSubscribe(trades::add);
