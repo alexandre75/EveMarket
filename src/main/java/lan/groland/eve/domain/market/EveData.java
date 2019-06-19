@@ -3,6 +3,7 @@ package lan.groland.eve.domain.market;
 import java.util.List;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import lan.groland.eve.domain.market.Station.Region;
 
 /**
@@ -38,5 +39,5 @@ public interface EveData {
     return stationOrderStatsAsync(jita).toList().blockingGet();
   }
 
-  Flowable<Sales> medianPriceAsync(ItemId item, Region region, double buyPrice);
+  Single<Sales> medianPriceAsync(ItemId item, Region region, double buyPrice);
 }

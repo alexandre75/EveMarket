@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.reactivestreams.FlowAdapters;
 
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import lan.groland.eve.domain.market.EveData;
 import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.OrderStats;
@@ -80,8 +81,8 @@ public class EdsEveData implements EveData {
   }
 
   @Override
-  public Flowable<Sales> medianPriceAsync(ItemId item, Region region, double buyPrice) {
-    return Flowable.fromCallable(() -> medianPrice(item, region, buyPrice));
+  public Single<Sales> medianPriceAsync(ItemId item, Region region, double buyPrice) {
+    return Single.fromCallable(() -> medianPrice(item, region, buyPrice));
   }
   
   @Override

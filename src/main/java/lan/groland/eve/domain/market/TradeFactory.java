@@ -1,8 +1,9 @@
 package lan.groland.eve.domain.market;
 
+import static java.util.stream.Collectors.toMap;
+
 import java.util.Map;
 import java.util.Optional;
-import static java.util.stream.Collectors.toMap;
 
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
@@ -12,7 +13,7 @@ import org.apache.log4j.Logger;
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
 
-import io.reactivex.Flowable;
+import io.reactivex.Single;
 import io.reactivex.functions.Function;
 import lan.groland.eve.domain.market.Station.Region;
 
@@ -53,7 +54,7 @@ public class TradeFactory {
    * @return the subsequent trade.
    * @throws OrderBookEmptyException
    */
-  public Flowable<Trade> create(Item item, ShipmentSpecification spec) {
+  public Single<Trade> create(Item item, ShipmentSpecification spec) {
    return create(item, spec.getDestination(), spec.salesTax());
   }
   
@@ -181,15 +182,15 @@ public class TradeFactory {
    * @return the subsequent trade.
    * @throws OrderBookEmptyException
    */
-  public Flowable<Trade> create(Item item, Station station, float salesTax) {
+  public Single<Trade> create(Item item, Station station, float salesTax) {
     if (!buyPrices.containsKey(item.getItemId())) {
-      return Flowable.error(new OrderBookEmptyException(item.getItemId(), Station.JITA));
+      return Single.error(new OrderBookEmptyException(item.getItemId(), Station.JITA));
     }
     double buyPrice = buyPrices.get(item.getItemId());
     
     OrderStats sellStats = getDestination(station.getRegion()).get(item.getItemId());
     if (sellStats == null) {
-      return Flowable.error(new OrderBookEmptyException(item.getItemId(), station));
+      return Single.error(new OrderBookEmptyException(item.getItemId(), station));
     }
 
     return eveData.medianPriceAsync(item.getItemId(), station.getRegion(), buyPrice)
