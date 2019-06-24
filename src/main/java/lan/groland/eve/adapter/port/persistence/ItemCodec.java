@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.persistence;
 
 import org.bson.BsonReader;
 import org.bson.BsonWriter;

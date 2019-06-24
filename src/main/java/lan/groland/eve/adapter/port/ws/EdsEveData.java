@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.ws;
 
 import java.io.IOException;
 import java.io.InputStream;

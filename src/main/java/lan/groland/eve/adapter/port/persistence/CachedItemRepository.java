@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.persistence;
 
 import static com.mongodb.client.model.Filters.eq;
 

@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.ws;
 
 import java.util.concurrent.Flow.Publisher;
 
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.reactivestreams.tck.TestEnvironment;
 import org.reactivestreams.tck.flow.FlowPublisherVerification;
 
+import lan.groland.eve.adapter.port.ws.JsonStatOrderParser;
 import lan.groland.eve.domain.market.OrderStats;
 
 class JsonStatOrderParserTest extends FlowPublisherVerification<OrderStats> {

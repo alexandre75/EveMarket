@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.ws;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -9,6 +9,8 @@ import com.google.inject.AbstractModule;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 
+import lan.groland.eve.adapter.port.persistence.CachedItemRepository;
+import lan.groland.eve.adapter.port.persistence.ItemCodec;
 import lan.groland.eve.domain.market.EveData;
 import lan.groland.eve.domain.market.ItemRepository;
 

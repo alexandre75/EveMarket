@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.ws;
 
 /**
  * Thrown when provider format is invalid

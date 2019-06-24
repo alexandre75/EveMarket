@@ -1,4 +1,4 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.ws;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.net.MediaType;
 
 import io.reactivex.Flowable;
+import lan.groland.eve.adapter.port.ws.EdsEveData;
 import lan.groland.eve.domain.market.EveData;
 import lan.groland.eve.domain.market.ItemId;
 import lan.groland.eve.domain.market.OrderStats;

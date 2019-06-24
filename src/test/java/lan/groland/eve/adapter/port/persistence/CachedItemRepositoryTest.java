@@ -1,11 +1,13 @@
-package lan.groland.eve.adapter.port;
+package lan.groland.eve.adapter.port.persistence;
 
 import static org.hamcrest.MatcherAssert.assertThat; 
 
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import lan.groland.eve.adapter.port.CachedItemRepository;
+import lan.groland.eve.adapter.port.persistence.CachedItemRepository;
+import lan.groland.eve.adapter.port.persistence.EveItemRepository;
+import lan.groland.eve.adapter.port.persistence.MongoItemRepository;
 import lan.groland.eve.domain.market.Item;
 import lan.groland.eve.domain.market.ItemId;
 
