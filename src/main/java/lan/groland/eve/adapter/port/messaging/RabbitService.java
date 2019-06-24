@@ -7,6 +7,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.common.util.concurrent.AbstractIdleService;
 import com.google.common.util.concurrent.AbstractService;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -19,11 +20,11 @@ import com.rabbitmq.client.Delivery;
 import lan.groland.eve.application.CargoApplicationService;
 import lan.groland.eve.domain.market.ShipmentSpecification;
 
-public class RabbitService extends  AbstractService {
+public class RabbitService extends AbstractService {
   @Inject
   private static Logger logger;
 
-  private static final String QUEUE_NAME = null;
+  private static final String QUEUE_NAME = "cargo.load";
   private final Connection connection;
   private Channel channel;
   private final CargoApplicationService shipmtService;
@@ -33,22 +34,11 @@ public class RabbitService extends  AbstractService {
     this.connection = connection;
     this.shipmtService = shipmtService;
   }
-
-  @Override
-  protected void doStart() {
-    try {
-      channel = connection.createChannel();
-      channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-      
-      //channel.basicQos(1);
-      
-      channel.basicConsume(QUEUE_NAME, true, this::messageHandler, consummerTag -> {});
-    } catch(IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
   
   private void messageHandler(String consumerTag, Delivery delivery) {
+    logger.info("cargo.load " + delivery.getProperties().getMessageId() + ", reply-to :"
+            + delivery.getProperties().getReplyTo());
+    logger.fine(() -> new String(delivery.getBody()));
     try {
       Gson gson = new Gson();
       try {
@@ -63,13 +53,35 @@ public class RabbitService extends  AbstractService {
             .priority(0)
             .contentType("application/json")
             .build();
-        channel.basicPublish("", delivery.getProperties().getReplyTo(), props, translator.toBytes());      
+        logger.info(delivery.getProperties().getReplyTo() + " replying...");
+        logger.fine(() -> new String(translator.toBytes()));
+        channel.basicPublish("", delivery.getProperties().getReplyTo(), props, translator.toBytes());
       } catch(JsonSyntaxException e) {
         logger.log(Level.SEVERE, "Could not process : ", e);
       }
       channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
     } catch(IOException e) {
       logger.log(Level.WARNING, "Could not process : ", e);
+    }
+  }
+
+  @Override
+  protected void doStart() {
+    try {
+      try {
+        channel = connection.createChannel();
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+        //channel.basicQos(1);
+
+        channel.basicConsume(QUEUE_NAME, true, this::messageHandler, consummerTag -> {
+        });
+      } catch (IOException e) {
+        throw new UncheckedIOException(e);
+      }
+      notifyStarted();
+    } catch(Throwable e) {
+      notifyFailed(e);
     }
   }
 
@@ -83,5 +95,6 @@ public class RabbitService extends  AbstractService {
     } catch(IOException e) {
       throw new UncheckedIOException(e);
     }
+    notifyStopped();
   }
 }

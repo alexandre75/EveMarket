@@ -2,6 +2,7 @@ package lan.groland.eve.application;
 
 import java.util.Collection;
 
+import com.google.inject.Inject;
 import lan.groland.eve.domain.market.ShipmentService;
 import lan.groland.eve.domain.market.ShipmentSpecification;
 import lan.groland.eve.domain.market.Trade;
@@ -9,8 +10,9 @@ import lan.groland.eve.domain.market.Trade;
 public class CargoApplicationService {
 
   private ShipmentService service;
-  
-  public CargoApplicationService(ShipmentService service) {
+
+  @Inject
+  CargoApplicationService(ShipmentService service) {
     this.service = service;
   }
 

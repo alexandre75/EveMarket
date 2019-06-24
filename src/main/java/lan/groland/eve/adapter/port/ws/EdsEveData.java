@@ -17,6 +17,7 @@ import javax.json.Json;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
+import com.google.inject.name.Named;
 import org.apache.log4j.Logger;
 import org.reactivestreams.FlowAdapters;
 
@@ -41,7 +42,7 @@ public class EdsEveData implements EveData {
 
   private final HttpClient client = HttpClient.newHttpClient();
   
-  public EdsEveData(String httpPrefix) {
+  public EdsEveData(@Named("eve-data.url") String httpPrefix) {
     this.httpPrefix = httpPrefix;
   }
   

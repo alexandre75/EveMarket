@@ -1,4 +1,4 @@
-package lan.groland.eve.application;
+package lan.groland.eve.bootstrap;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -13,14 +13,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
+import com.google.gson.Gson;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.name.Names;
 
 import lan.groland.eve.adapter.port.ws.EsiEveDataModule;
+import lan.groland.eve.application.TradeFormat;
 import lan.groland.eve.domain.market.ShipmentService;
 import lan.groland.eve.domain.market.ShipmentSpecification;
 import lan.groland.eve.domain.market.Station;
@@ -37,9 +37,6 @@ public class Main {
   private static final Main INSTANCE = new Main();
   private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::dailyBenefit);
   private static NumberFormat intFormat = NumberFormat.getIntegerInstance();
-  
-  @SuppressWarnings("unused")
-  private static Logger logger = Logger.getLogger(Main.class);
   
   static final double cash = 6e9;
   
@@ -111,6 +108,8 @@ public class Main {
     ShipmentSpecification spec = new ShipmentSpecification.Builder(station, cash)
                                                           .alreadyBought(alreadyBought)
                                                           .build();
+    Gson json = new Gson();
+    System.out.println(json.toJson(spec));
     return shipmentService.optimizeCargo(spec);
   }
 }

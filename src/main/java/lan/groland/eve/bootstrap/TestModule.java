@@ -1,4 +1,4 @@
-package lan.groland.eve.application;
+package lan.groland.eve.bootstrap;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;

@@ -8,9 +8,8 @@ import static org.hamcrest.Matchers.*;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
-import lan.groland.eve.adapter.port.persistence.MongoItemRepository;
 import lan.groland.eve.adapter.port.ws.EsiEveDataModule;
-import lan.groland.eve.application.TestModule;
+import lan.groland.eve.bootstrap.TestModule;
 import lan.groland.eve.domain.market.Item;
 
 public class MongoItemRepositoryTest {
