@@ -5,11 +5,10 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.logging.Logger;
 
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.log4j.Logger;
 
 /**
  * List des meilleurs trades
@@ -19,7 +18,7 @@ import org.apache.log4j.Logger;
 @ThreadSafe
 public class Cargo extends AbstractCollection<Trade> {
   private static final Comparator<Trade> TRADE_COMPARATOR = Comparator.comparing(Trade::dailyBenefit);
-  private static Logger logger = Logger.getLogger(Cargo.class);
+  private static Logger logger = Logger.getLogger(Cargo.class.getName());
   
   @GuardedBy("this")
   private final Queue<Trade> trades = new PriorityQueue<Trade>(TRADE_COMPARATOR);

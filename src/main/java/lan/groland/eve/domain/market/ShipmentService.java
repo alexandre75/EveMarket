@@ -2,8 +2,7 @@ package lan.groland.eve.domain.market;
 
 import java.util.Collection;
 import java.util.Optional;
-
-import org.apache.log4j.Logger;
+import java.util.logging.Logger;
 
 import com.google.inject.Inject;
 
@@ -17,7 +16,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class ShipmentService {
   @SuppressWarnings("unused")
-  private static Logger logger = Logger.getLogger(ShipmentService.class);
+  private static Logger logger = Logger.getLogger(ShipmentService.class.getName());
 
   private final EveData eveData;
   private final ItemRepository itemRepository;

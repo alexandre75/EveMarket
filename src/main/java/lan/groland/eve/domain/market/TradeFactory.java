@@ -4,11 +4,10 @@ import static java.util.stream.Collectors.toMap;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
-
-import org.apache.log4j.Logger;
 
 import com.google.common.base.MoreObjects;
 import com.google.inject.Inject;
@@ -24,7 +23,7 @@ import lan.groland.eve.domain.market.Station.Region;
  */
 @ThreadSafe
 public class TradeFactory {
-  private static final Logger logger = Logger.getLogger(TradeFactory.class);
+  private static final Logger logger = Logger.getLogger(TradeFactory.class.getName());
   
   private final EveData eveData;
   private final Map<ItemId, Float> buyPrices;
@@ -50,9 +49,8 @@ public class TradeFactory {
    * <li>Derive the financial data characterizing the trade.
    * <ul>
    * @param item the item bought at Jita
-   * @param station item is sold at "sell" price in this station.
+   * @param spec constraints the shipment should comply
    * @return the subsequent trade.
-   * @throws OrderBookEmptyException
    */
   public Single<Trade> create(Item item, ShipmentSpecification spec) {
    return create(item, spec.getDestination(), spec.salesTax());
@@ -180,7 +178,6 @@ public class TradeFactory {
    * @param item the item bought at Jita
    * @param station item is sold at "sell" price in this station.
    * @return the subsequent trade.
-   * @throws OrderBookEmptyException
    */
   public Single<Trade> create(Item item, Station station, float salesTax) {
     if (!buyPrices.containsKey(item.getItemId())) {
@@ -203,7 +200,7 @@ public class TradeFactory {
               }
               return new RawTrade(item, buyPrice, sellStats, sales, salesTax);
             } catch(IllegalArgumentException e) { // sometime unknown type id are pulled off
-              logger.warn("Can't get history, ignoring :" + e.getMessage());
+              logger.warning("Can't get history, ignoring :" + e.getMessage());
               throw new OrderBookEmptyException(item.getItemId(), station);
             }
           }
