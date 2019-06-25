@@ -55,7 +55,7 @@ class Parser implements Subscription {
     stopped = true;
     new Thread(() -> {
       synchronized (Parser.this) {
-        parser.close();
+      //  parser.close();
       }
     }).start();
   }
@@ -104,7 +104,7 @@ class Parser implements Subscription {
       }
     }
     if (!parser.hasNext()) {
-      parser.close();
+     // parser.close();
     }
     return next;
   }

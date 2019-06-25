@@ -30,6 +30,8 @@ class Config extends AbstractModule {
   @Override
   protected void configure() {
     bind(String.class).annotatedWith(Names.named("mongo.schema")).toInstance("EveMarket");
+    bind(String.class).annotatedWith(Names.named("mongo.host")).toInstance("localhost");
+    bind(String.class).annotatedWith(Names.named("eve-data.url")).toInstance("http://saturne:3000");
   }
 }
 

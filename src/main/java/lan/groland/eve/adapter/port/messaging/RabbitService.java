@@ -1,8 +1,10 @@
 package lan.groland.eve.adapter.port.messaging;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,6 +14,7 @@ import com.google.common.util.concurrent.AbstractService;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.inject.Inject;
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -19,10 +22,11 @@ import com.rabbitmq.client.Delivery;
 
 import lan.groland.eve.application.CargoApplicationService;
 import lan.groland.eve.domain.market.ShipmentSpecification;
+import lan.groland.eve.domain.market.Trade;
 
 public class RabbitService extends AbstractService {
   @Inject
-  private static Logger logger;
+  private static Logger logger = Logger.getLogger("eve.adapter.port.messaging");
 
   private static final String QUEUE_NAME = "cargo.load";
   private final Connection connection;
@@ -34,7 +38,7 @@ public class RabbitService extends AbstractService {
     this.connection = connection;
     this.shipmtService = shipmtService;
   }
-  
+
   private void messageHandler(String consumerTag, Delivery delivery) {
     logger.info("cargo.load " + delivery.getProperties().getMessageId() + ", reply-to :"
             + delivery.getProperties().getReplyTo());
@@ -44,25 +48,42 @@ public class RabbitService extends AbstractService {
       try {
         ShipmentSpecification spec = gson.fromJson(new String(delivery.getBody(), StandardCharsets.UTF_8),
                                                    ShipmentSpecification.class);
-        TradesTranslator translator = new TradesTranslator(shipmtService.optimizeCargo(spec));
+        Collection<Trade> trades = shipmtService.optimizeCargo(spec);
+
+        byte[] tradeBytes = serialize(trades);
 
         channel.queueDeclare(delivery.getProperties().getReplyTo(), true, false, false, null);
-        BasicProperties props = new BasicProperties.Builder()
+        BasicProperties props = getProperties(delivery);
+        logger.info(delivery.getProperties().getReplyTo() + " replying...");
+        logger.fine(() -> new String(tradeBytes));
+        channel.basicPublish("", delivery.getProperties().getReplyTo(), props, tradeBytes);
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+      } catch(JsonSyntaxException e) {
+        logger.log(Level.SEVERE, delivery.getProperties().getMessageId(), e);
+        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+      } catch(IOException e) {
+        logger.log(Level.WARNING, delivery.getProperties().getMessageId(), e);
+        channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);
+      }
+    } catch(IOException e) {
+      logger.log(Level.SEVERE, "Could not process : ", e);
+    }
+  }
+
+  private static BasicProperties getProperties(Delivery delivery) {
+    return new BasicProperties.Builder()
             .correlationId(delivery.getProperties().getMessageId())
             .deliveryMode(2)
             .priority(0)
             .contentType("application/json")
             .build();
-        logger.info(delivery.getProperties().getReplyTo() + " replying...");
-        logger.fine(() -> new String(translator.toBytes()));
-        channel.basicPublish("", delivery.getProperties().getReplyTo(), props, translator.toBytes());
-      } catch(JsonSyntaxException e) {
-        logger.log(Level.SEVERE, "Could not process : ", e);
-      }
-      channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-    } catch(IOException e) {
-      logger.log(Level.WARNING, "Could not process : ", e);
-    }
+  }
+
+  private byte[] serialize(Collection<Trade> trades) {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    TradesTranslator translator = new TradesTranslator(output);
+    translator.write(trades);
+    return output.toByteArray();
   }
 
   @Override

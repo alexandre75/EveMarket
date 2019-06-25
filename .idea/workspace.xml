@@ -2,25 +2,27 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c8b94d63-f3d7-4dba-88d2-03f8294a0439" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/test/java/lan/groland/eve/adapter/port/messaging/TradesTranslatorTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/.classpath" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.project" beforeDir="false" afterPath="$PROJECT_DIR$/.project" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
       <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.classpath" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.classpath" afterDir="false" />
-      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/gradle.xml" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/misc.xml" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/misc.xml" afterDir="false" />
       <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/workspace.xml" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.idea/workspace.xml" afterDir="false" />
       <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.project" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.project" afterDir="false" />
       <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.settings/org.eclipse.core.resources.prefs" beforeDir="false" />
       <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.settings/org.eclipse.jdt.core.prefs" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.settings/org.eclipse.jdt.core.prefs" afterDir="false" />
       <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/.settings/org.eclipse.m2e.core.prefs" beforeDir="false" />
+      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/build.gradle" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/build.gradle" afterDir="false" />
       <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/pom.xml" beforeDir="false" />
-      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitModule.java" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitModule.java" afterDir="false" />
-      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/application/CargoApplicationService.java" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/application/CargoApplicationService.java" afterDir="false" />
+      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java" afterDir="false" />
+      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java" afterDir="false" />
+      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/JsonStatOrderParser.java" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/JsonStatOrderParser.java" afterDir="false" />
+      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/Main.java" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/Main.java" afterDir="false" />
+      <change beforePath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/TestModule.java" beforeDir="false" afterPath="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/TestModule.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/out/" />
@@ -41,71 +43,14 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="50" column="67" lean-forward="true" selection-start-line="50" selection-start-column="67" selection-end-line="50" selection-end-column="67" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/EsiEveDataModule.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="23" column="30" lean-forward="true" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/EdsEveData.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="44" column="20" lean-forward="true" selection-start-line="44" selection-start-column="20" selection-end-line="44" selection-end-column="20" />
+            <state relative-caret-position="525">
+              <caret line="123" column="2" lean-forward="true" selection-start-line="123" selection-start-column="2" selection-end-line="123" selection-end-column="2" />
               <folding>
-                <element signature="e#1404#1405#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#1449#1450#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/persistence/CachedItemRepository.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="81" lean-forward="true" selection-start-line="81" selection-end-line="81" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="32" column="28" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
-              <folding>
-                <element signature="e#252#253#0" expanded="true" />
-                <element signature="e#283#284#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/Main.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="438">
-              <caret line="111" column="31" lean-forward="true" selection-start-line="111" selection-start-column="23" selection-end-line="111" selection-end-column="40" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/domain/market/ShipmentSpecification.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="25">
-              <caret line="84" selection-start-line="84" selection-end-line="84" />
             </state>
           </provider>
         </entry>
@@ -113,8 +58,95 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/TestModule.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+            <state relative-caret-position="120">
+              <caret line="9" selection-start-line="9" selection-end-line="10" selection-end-column="100" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/persistence/CachedItemRepository.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="400">
+              <caret line="81" selection-start-line="81" selection-end-line="81" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="21" column="37" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
+              <folding>
+                <element signature="e#391#392#0" expanded="true" />
+                <element signature="e#413#414#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/test/java/lan/groland/eve/adapter/port/messaging/TradesTranslatorTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1172">
+              <caret line="82" column="141" selection-start-line="82" selection-start-column="141" selection-end-line="82" selection-end-column="141" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#387#388#0" expanded="true" />
+                <element signature="e#413#414#0" expanded="true" />
+                <element signature="e#467#468#0" expanded="true" />
+                <element signature="e#493#494#0" expanded="true" />
+                <element signature="e#541#542#0" expanded="true" />
+                <element signature="e#567#568#0" expanded="true" />
+                <element signature="e#616#617#0" expanded="true" />
+                <element signature="e#642#643#0" expanded="true" />
+                <element signature="e#695#696#0" expanded="true" />
+                <element signature="e#721#722#0" expanded="true" />
+                <element signature="e#778#779#0" expanded="true" />
+                <element signature="e#804#805#0" expanded="true" />
+                <element signature="e#860#861#0" expanded="true" />
+                <element signature="e#886#887#0" expanded="true" />
+                <element signature="e#957#958#0" expanded="true" />
+                <element signature="e#998#999#0" expanded="true" />
+                <element signature="e#1053#1054#0" expanded="true" />
+                <element signature="e#1079#1080#0" expanded="true" />
+                <element signature="e#1123#1124#0" expanded="true" />
+                <element signature="e#1152#1153#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="465">
+              <caret line="65" column="76" selection-start-line="65" selection-start-column="76" selection-end-line="65" selection-end-column="76" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="14" selection-start-line="14" selection-end-line="14" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/EveMarket.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="20" selection-start-line="20" selection-end-line="20" />
             </state>
           </provider>
         </entry>
@@ -123,12 +155,19 @@
         <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/resources/application.properties">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
-              <caret line="6" column="19" lean-forward="true" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+              <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TestNG Test Class" />
+      </list>
+    </option>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -147,14 +186,17 @@
         <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/build.gradle" />
         <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/application/EveMarket.java" />
         <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/application/CargoApplicationService.java" />
-        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/TestModule.java" />
         <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/EveMarket.java" />
-        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java" />
-        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/Main.java" />
-        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java" />
-        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/EdsEveData.java" />
         <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/EsiEveDataModule.java" />
         <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/resources/application.properties" />
+        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/JsonStatOrderParser.java" />
+        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/TestModule.java" />
+        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/Main.java" />
+        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/test/java/lan/groland/eve/adapter/port/messaging/TradesTranslatorTest.java" />
+        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/EdsEveData.java" />
+        <option value="/mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java" />
       </list>
     </option>
   </component>
@@ -177,88 +219,6 @@
               <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
               <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="eve" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="eve" type="462c0819:PsiDirectoryNode" />
-              <item name="port" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="eve" type="462c0819:PsiDirectoryNode" />
-              <item name="port" type="462c0819:PsiDirectoryNode" />
-              <item name="persistence" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="eve" type="462c0819:PsiDirectoryNode" />
-              <item name="port" type="462c0819:PsiDirectoryNode" />
-              <item name="persistence" type="462c0819:PsiDirectoryNode" />
-              <item name="CachedItemRepository.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="eve" type="462c0819:PsiDirectoryNode" />
-              <item name="bootstrap" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="eve" type="462c0819:PsiDirectoryNode" />
-              <item name="bootstrap" type="462c0819:PsiDirectoryNode" />
-              <item name="Main.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </path>
-            <path>
-              <item name="EveMarket" type="b2602c69:ProjectViewProjectNode" />
-              <item name="EveMarket" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -268,7 +228,17 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="TestNG" />
+    <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.TestNG" value="" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="lan.groland.eve.adapter.port.messaging" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -324,10 +294,43 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="TradesTranslatorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="EveMarket.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lan.groland.eve.adapter.port.messaging.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="lan.groland.eve.adapter.port.messaging" />
+      <option name="MAIN_CLASS_NAME" value="lan.groland.eve.adapter.port.messaging.TradesTranslatorTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TradesTranslatorTest.testWrite" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="EveMarket.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lan.groland.eve.adapter.port.messaging.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="lan.groland.eve.adapter.port.messaging" />
+      <option name="MAIN_CLASS_NAME" value="lan.groland.eve.adapter.port.messaging.TradesTranslatorTest" />
+      <option name="METHOD_NAME" value="testWrite" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.EveMarket" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.TradesTranslatorTest.testWrite" />
+        <item itemvalue="JUnit.TradesTranslatorTest" />
         <item itemvalue="JUnit.CachedItemRepositoryTest" />
       </list>
     </recent_temporary>
@@ -345,11 +348,28 @@
     </task>
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="TradesTranslatorTest_testWrite - 2019.06.24 at 19h 14m 44s.xml">
+      <configuration name="TradesTranslatorTest.testWrite" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TradesTranslatorTest_testWrite - 2019.06.24 at 19h 16m 05s.xml">
+      <configuration name="TradesTranslatorTest.testWrite" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TradesTranslatorTest_testWrite - 2019.06.24 at 19h 17m 30s.xml">
+      <configuration name="TradesTranslatorTest.testWrite" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TradesTranslatorTest_testWrite - 2019.06.24 at 19h 19m 00s.xml">
+      <configuration name="TradesTranslatorTest.testWrite" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TradesTranslatorTest_testWrite - 2019.06.24 at 19h 19m 24s.xml">
+      <configuration name="TradesTranslatorTest.testWrite" configurationId="JUnit" />
+    </history-entry>
+  </component>
   <component name="ToolWindowManager">
     <frame x="0" y="34" width="1920" height="1139" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25320512" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25320512" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -357,8 +377,8 @@
       <window_info id="UI Designer" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32934132" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32934132" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32934132" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3992016" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -383,16 +403,10 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/EveMarket.java</url>
-          <line>20</line>
-          <properties />
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java</url>
-          <line>71</line>
+          <line>42</line>
           <properties />
-          <option name="timeStamp" value="5" />
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -416,16 +430,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="39" selection-start-line="39" selection-end-line="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="24" column="18" lean-forward="true" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -472,38 +476,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/EveMarket.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="25" column="5" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="32" column="28" selection-start-line="32" selection-start-column="28" selection-end-line="32" selection-end-column="28" />
-          <folding>
-            <element signature="e#252#253#0" expanded="true" />
-            <element signature="e#283#284#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/domain/market/ShipmentService.java">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="jrt:///usr/lib/jvm/java-1.11.0-openjdk-amd64!/java.base/java/util/function/Supplier.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="9" column="6" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/TestModule.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="5" column="13" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -521,48 +497,169 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java">
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/persistence/CachedItemRepository.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="50" column="67" lean-forward="true" selection-start-line="50" selection-start-column="67" selection-end-line="50" selection-end-column="67" />
+        <state relative-caret-position="400">
+          <caret line="81" selection-start-line="81" selection-end-line="81" />
         </state>
       </provider>
     </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/resources/application.properties">
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/domain/market/ShipmentService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="19" lean-forward="true" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+        <state relative-caret-position="332">
+          <caret line="44" column="27" selection-start-line="44" selection-start-column="27" selection-end-line="44" selection-end-column="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/Main.java">
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/JsonStatOrderParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="438">
-          <caret line="111" column="31" lean-forward="true" selection-start-line="111" selection-start-column="23" selection-end-line="111" selection-end-column="40" />
+        <state relative-caret-position="124">
+          <caret line="53" column="24" lean-forward="true" selection-start-line="53" selection-start-column="24" selection-end-line="53" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/EsiEveDataModule.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
-          <caret line="23" column="30" lean-forward="true" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
+          <caret line="23" column="30" selection-start-line="23" selection-start-column="30" selection-end-line="23" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/TestModule.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="9" selection-start-line="9" selection-end-line="10" selection-end-column="100" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="42" column="33" lean-forward="true" selection-start-line="42" selection-start-column="33" selection-end-line="42" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/domain/market/Trade.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/resources/application.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/TradesTranslator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="21" column="37" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
+          <folding>
+            <element signature="e#391#392#0" expanded="true" />
+            <element signature="e#413#414#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/test/java/lan/groland/eve/adapter/port/messaging/TradesTranslatorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1172">
+          <caret line="82" column="141" selection-start-line="82" selection-start-column="141" selection-end-line="82" selection-end-column="141" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#387#388#0" expanded="true" />
+            <element signature="e#413#414#0" expanded="true" />
+            <element signature="e#467#468#0" expanded="true" />
+            <element signature="e#493#494#0" expanded="true" />
+            <element signature="e#541#542#0" expanded="true" />
+            <element signature="e#567#568#0" expanded="true" />
+            <element signature="e#616#617#0" expanded="true" />
+            <element signature="e#642#643#0" expanded="true" />
+            <element signature="e#695#696#0" expanded="true" />
+            <element signature="e#721#722#0" expanded="true" />
+            <element signature="e#778#779#0" expanded="true" />
+            <element signature="e#804#805#0" expanded="true" />
+            <element signature="e#860#861#0" expanded="true" />
+            <element signature="e#886#887#0" expanded="true" />
+            <element signature="e#957#958#0" expanded="true" />
+            <element signature="e#998#999#0" expanded="true" />
+            <element signature="e#1053#1054#0" expanded="true" />
+            <element signature="e#1079#1080#0" expanded="true" />
+            <element signature="e#1123#1124#0" expanded="true" />
+            <element signature="e#1152#1153#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/bootstrap/EveMarket.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.rabbitmq/amqp-client/5.7.1/be65cb49b886a048b0229e3b00dabec9be05d95f/amqp-client-5.7.1-sources.jar!/com/rabbitmq/client/impl/ConsumerWorkService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="113" selection-start-line="113" selection-end-line="113" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.rabbitmq/amqp-client/5.7.1/be65cb49b886a048b0229e3b00dabec9be05d95f/amqp-client-5.7.1-sources.jar!/com/rabbitmq/client/impl/ConsumerDispatcher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="310">
+          <caret line="160" selection-start-line="160" selection-end-line="160" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="24" column="18" lean-forward="true" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/ws/EdsEveData.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="44" column="20" lean-forward="true" selection-start-line="44" selection-start-column="20" selection-end-line="44" selection-end-column="20" />
+        <state relative-caret-position="525">
+          <caret line="123" column="2" lean-forward="true" selection-start-line="123" selection-start-column="2" selection-end-line="123" selection-end-column="2" />
           <folding>
-            <element signature="e#1404#1405#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#1449#1450#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/persistence/CachedItemRepository.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.rabbitmq/amqp-client/5.7.1/be65cb49b886a048b0229e3b00dabec9be05d95f/amqp-client-5.7.1-sources.jar!/com/rabbitmq/client/Channel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="81" lean-forward="true" selection-start-line="81" selection-end-line="81" />
+        <state relative-caret-position="214">
+          <caret line="255" column="9" selection-start-line="255" selection-start-column="9" selection-end-line="255" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///mnt/bulk-data/alexandre/projects/workspace/EveMarket/src/main/java/lan/groland/eve/adapter/port/messaging/RabbitService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="65" column="76" selection-start-line="65" selection-start-column="76" selection-end-line="65" selection-end-column="76" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

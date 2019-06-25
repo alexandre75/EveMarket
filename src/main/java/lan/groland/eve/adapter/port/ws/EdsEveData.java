@@ -12,13 +12,14 @@ import java.net.http.HttpResponse.BodySubscribers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Flow.Publisher;
+import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.stream.JsonParser;
 import javax.json.stream.JsonParser.Event;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import org.apache.log4j.Logger;
 import org.reactivestreams.FlowAdapters;
 
 import io.reactivex.Flowable;
@@ -36,13 +37,14 @@ import lan.groland.eve.domain.market.Station.Region;
  *
  */
 public class EdsEveData implements EveData {
-  private static final Logger logger = Logger.getLogger(EdsEveData.class);
+  private static final Logger logger = Logger.getLogger(EdsEveData.class.getName());
   
   private final String httpPrefix;
 
   private final HttpClient client = HttpClient.newHttpClient();
-  
-  public EdsEveData(@Named("eve-data.url") String httpPrefix) {
+
+  @Inject
+  EdsEveData(@Named("eve-data.url") String httpPrefix) {
     this.httpPrefix = httpPrefix;
   }
   
@@ -105,7 +107,7 @@ public class EdsEveData implements EveData {
         } else if (response.statusCode() < 500 || ++error > 3){
           throw new IllegalStateException("Item : " + item + ", region:" + region + ", status:" + response.statusCode());
         } else {
-          logger.warn("Retrying : Item : " + item + ", region:" + region + ", status:" + response.statusCode());
+          logger.warning("Retrying : Item : " + item + ", region:" + region + ", status:" + response.statusCode());
         }
       }
     } catch(IOException e) {
