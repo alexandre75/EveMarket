@@ -42,7 +42,7 @@ class TradeFactoryTest {
     when(eveData.regionOrderStats(any())).thenReturn(ImmutableList.of(new OrderStats(item, 1, 120D)));
     when(eveData.medianPriceAsync(eq(item), any(), eq(100D))).thenReturn(Single.just(new Sales(100, 150D)));
     
-    Trade trade = subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F).blockingGet();
+    Trade trade = subject.trade(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F).blockingGet();
     
     assertEquals(.199D, trade.expectedMargin(), 0.001);
     assertEquals(1000, trade.volume(), 0.001);
@@ -59,7 +59,7 @@ class TradeFactoryTest {
     when(eveData.medianPriceAsync(eq(item), any(), eq(100D))).thenReturn(Single.just(new Sales(100, 150D)));
     
     TestSubscriber<Trade> subscriber = new TestSubscriber<>();
-    subject.create(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F)
+    subject.trade(new Item(item, "", 10), Station.AMARR_STATION, 1F-.962F)
            .toFlowable().subscribe(subscriber);
     subscriber.assertError(OrderBookEmptyException.class);
     subscriber.assertError(e -> ((OrderBookEmptyException) e).getItemId() == 5);

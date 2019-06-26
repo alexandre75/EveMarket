@@ -40,7 +40,7 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedBy(any())).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
     when(specs.isSatisfiedByTrade(any())).thenReturn(true);
-    when(tradeFactory.create(any(), any())).thenReturn(Single.just(mockTrade1));
+    when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
     Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
@@ -55,7 +55,7 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedBy(argThat(item -> item.getItemId().typeId() < 30))).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
     when(specs.isSatisfiedByTrade(any())).thenReturn(true);
-    when(tradeFactory.create(any(), any())).thenReturn(Single.just(mockTrade1));
+    when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
     Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
@@ -69,7 +69,7 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedBy(any())).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
     
-    when(tradeFactory.create(any(), any())).thenReturn(Single.just(mockTrade1));
+    when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.empty());
     
     Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
@@ -83,7 +83,7 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedBy(any())).thenReturn(true);
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
     
-    when(tradeFactory.create(any(), any()))
+    when(tradeFactory.trade(any(), any()))
                      .thenReturn(Single.error(new OrderBookEmptyException(5, Station.AMARR_STATION)));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
@@ -102,7 +102,7 @@ class ShipmentServiceTest {
     when(specs.isSatisfiedByCargo(any())).thenReturn(true);
     when(specs.isSatisfiedByTrade(any())).thenReturn(true);
     
-    when(tradeFactory.create(any(), any())).thenReturn(Single.just(mockTrade1));
+    when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
     Collection<Trade> trades = subject.optimizeCargo(specs);

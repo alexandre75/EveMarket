@@ -34,11 +34,9 @@ public class TradeFactory {
   private Region region;
 
   @Inject
-  TradeFactory(EveData eveData) {
+  TradeFactory(EveData eveData, Map<ItemId, Float> buyPrices) {
     this.eveData = eveData;
-    buyPrices = eveData.stationOrderStatsAsync(Station.JITA)
-        .toMap(OrderStats::getItem, OrderStats::getBid)
-        .blockingGet();
+    this.buyPrices = buyPrices;
   }
   
   /**
@@ -52,8 +50,8 @@ public class TradeFactory {
    * @param spec constraints the shipment should comply
    * @return the subsequent trade.
    */
-  public Single<Trade> create(Item item, ShipmentSpecification spec) {
-   return create(item, spec.getDestination(), spec.salesTax());
+  public Single<Trade> trade(Item item, ShipmentSpecification spec) {
+   return trade(item, spec.getDestination(), spec.salesTax());
   }
   
   private synchronized Map<ItemId, OrderStats> getDestination(Region region){
@@ -65,6 +63,13 @@ public class TradeFactory {
       assert this.region == region;
     }
     return destination;
+  }
+
+  public static TradeFactory create(EveData eveData){
+    Map<ItemId, Float> buyPrices = eveData.stationOrderStatsAsync(Station.JITA)
+            .toMap(OrderStats::getItem, OrderStats::getBid)
+            .blockingGet();
+    return new TradeFactory(eveData, buyPrices);
   }
 
   private static class RawTrade implements Trade {
@@ -179,7 +184,7 @@ public class TradeFactory {
    * @param station item is sold at "sell" price in this station.
    * @return the subsequent trade.
    */
-  public Single<Trade> create(Item item, Station station, float salesTax) {
+  public Single<Trade> trade(Item item, Station station, float salesTax) {
     if (!buyPrices.containsKey(item.getItemId())) {
       return Single.error(new OrderBookEmptyException(item.getItemId(), Station.JITA));
     }

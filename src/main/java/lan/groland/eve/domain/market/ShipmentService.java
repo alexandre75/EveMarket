@@ -20,14 +20,12 @@ public class ShipmentService {
 
   private final EveData eveData;
   private final ItemRepository itemRepository;
-  private final TradeFactory tradeFactory;
 
   @Inject
-  ShipmentService(EveData eveData, ItemRepository itemRepository, TradeFactory tradeFactory) {
+  ShipmentService(EveData eveData, ItemRepository itemRepository) {
     super();
     this.eveData = eveData;
     this.itemRepository = itemRepository;
-    this.tradeFactory = tradeFactory;
   }
 
   /**
@@ -64,9 +62,11 @@ public class ShipmentService {
    */
   public Collection<Trade> load(Flowable<Item> items, ShipmentSpecification shipSpec) {
     logger.info("Optimizing the cargo");
+    TradeFactory tradeFactory = TradeFactory.create(eveData);
+
     Cargo trades = new Cargo(shipSpec);
     items.filter(shipSpec::isSatisfiedBy)
-         .flatMap(item -> tradeFactory.create(item, shipSpec).toFlowable()
+         .flatMap(item -> tradeFactory.trade(item, shipSpec).toFlowable()
                                       .onExceptionResumeNext(Flowable.empty()))
          .filter(shipSpec::isSatisfiedByTrade)
          .map(trade -> trade.adjust(shipSpec.cashAvailable() / (double) shipSpec.tradingSlots()))
