@@ -159,7 +159,7 @@ public class TradeFactory {
     
     @Override
     public String toString() {
-      return MoreObjects.toStringHelper(TradeFactory.class)
+      return MoreObjects.toStringHelper(Trade.class)
                         .add("item", item.getName())
                         .add("qty", this.quantiteAAcheter())
                         .add("buy", this.buyPrice)
