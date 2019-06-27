@@ -10,6 +10,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.logging.Logger;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -33,7 +34,8 @@ import lan.groland.eve.domain.market.ItemRepository;
  *
  */
 public class CachedItemRepository implements ItemRepository, AutoCloseable {
-  
+  private static Logger logger = Logger.getLogger("lan.groland.eve.adapter.port.persistence");
+
   private final MongoItemRepository mongoRepo;
   private final EveItemRepository eveRepo;
   
@@ -46,12 +48,14 @@ public class CachedItemRepository implements ItemRepository, AutoCloseable {
 
   @Override
   public Item find(ItemId id) {
+    logger.fine("findItem " + id + "...");
     Item item = mongoRepo.find(id);
     if (item == null) {
       item = eveRepo.find(id);
       mongoRepo.add(item);
     }
     assert item != null;
+    logger.fine("...findItem");
     return item;
   }
 

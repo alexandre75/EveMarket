@@ -69,6 +69,7 @@ public class TradeFactory {
     Map<ItemId, Float> buyPrices = eveData.stationOrderStatsAsync(Station.JITA)
             .toMap(OrderStats::getItem, OrderStats::getBid)
             .blockingGet();
+    logger.fine("Jita price hashtable created");
     return new TradeFactory(eveData, buyPrices);
   }
 

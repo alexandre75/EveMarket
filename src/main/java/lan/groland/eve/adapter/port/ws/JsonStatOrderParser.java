@@ -104,7 +104,7 @@ class Parser implements Subscription {
       }
     }
     if (!parser.hasNext()) {
-     // parser.close();
+      parser.close();
     }
     return next;
   }
