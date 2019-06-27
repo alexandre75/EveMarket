@@ -31,6 +31,7 @@ public class CargoApplicationService {
    * @see ShipmentSpecification
    */
   public Collection<Trade> optimizeCargo(ShipmentSpecification spec) {
+
     try {
       return service.optimizeCargo(spec);
     } catch(Throwable e) {

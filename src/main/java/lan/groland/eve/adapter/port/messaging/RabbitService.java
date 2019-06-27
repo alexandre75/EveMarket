@@ -51,17 +51,19 @@ public class RabbitService extends AbstractService {
         Collection<Trade> trades = shipmtService.optimizeCargo(spec);
 
         byte[] tradeBytes = serialize(trades);
-        channel.queueDeclare(delivery.getProperties().getReplyTo(), true, false, false, null);
+
         BasicProperties props = getProperties(delivery);
         logger.info(delivery.getProperties().getReplyTo() + " replying...");
         logger.fine(() -> new String(tradeBytes));
+        channel.queueDeclare(delivery.getProperties().getReplyTo(), true, false, false, null);
         channel.basicPublish("", delivery.getProperties().getReplyTo(), props, tradeBytes);
+
         channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-      } catch(JsonSyntaxException e) {
+      } catch(JsonSyntaxException | IOException | IllegalArgumentException e) {
+        // TODO move to invalid queue?
         logger.log(Level.SEVERE, delivery.getProperties().getMessageId(), e);
         channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-      } catch(IOException e) {
-        logger.log(Level.WARNING, delivery.getProperties().getMessageId(), e);
+      } catch(Exception e) {
         channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);
       }
     } catch(IOException e) {
