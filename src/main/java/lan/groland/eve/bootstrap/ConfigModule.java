@@ -1,5 +1,6 @@
 package lan.groland.eve.bootstrap;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -11,7 +12,7 @@ class ConfigModule extends AbstractModule {
   protected void configure() {
     try {
       Properties properties = new Properties();
-      properties.load(ClassLoader.getSystemResourceAsStream("application.properties"));
+      properties.load(new FileReader("/etc/evecop.conf"));
       Names.bindProperties(binder(), properties);
     } catch (IOException e) {
       throw new IllegalStateException(e);

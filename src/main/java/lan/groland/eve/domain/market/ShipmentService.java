@@ -42,7 +42,6 @@ public class ShipmentService {
   public Collection<Trade> optimizeCargo(ShipmentSpecification shipSpec) {
     logger.info("Loading items for sale and pre filtering");
     Flowable<Item> items = eveData.stationOrderStatsAsync(Station.JITA)
-        .observeOn(Schedulers.io())
         .filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
         .flatMap(os -> itemRepository.findAsync(os.getItem()));
     return load(items, shipSpec);

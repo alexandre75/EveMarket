@@ -55,6 +55,7 @@ public class EdsEveData implements EveData {
   }
 
   private Publisher<OrderStats> ordersAsync(URI orderStatsUri) {
+    logger.fine("Request ordersAsync " + orderStatsUri.toString() + "...");
     try {     
       HttpRequest request = HttpRequest.newBuilder()
           .uri(orderStatsUri)
@@ -62,6 +63,7 @@ public class EdsEveData implements EveData {
           .build();
       
       HttpResponse<InputStream> is = client.send(request, BodyHandlers.ofInputStream());
+      logger.fine("... done ordersAsync.");
       if (is.statusCode() == 200) {
         return new JsonStatOrderParser(is.body());
       } else {
@@ -90,6 +92,7 @@ public class EdsEveData implements EveData {
   
   @Override
   public Sales medianPrice(ItemId item, Region region, double buyPrice) {
+    logger.fine("Request medianPrice " + item.typeId() + "...");
     try {
       int error = 0;
       while (true) {
@@ -100,6 +103,7 @@ public class EdsEveData implements EveData {
             .build();
         var response = client.send(request, resp -> resp.statusCode() == 200 ? new SalesSubscriber() 
             : BodySubscribers.replacing((Sales)null));
+        logger.fine("...medianPrice");
         if (response.statusCode() == 200) {
          return response.body();
         } else if (response.statusCode() == 404) { 
