@@ -55,7 +55,7 @@ public class ShipmentSpecification {
     
     if (trade.expectedMargin() < .4D) {
       return false;
-    
+    }
     
     if (trade.dailyBenefit() < 1e6) {
       return false;
