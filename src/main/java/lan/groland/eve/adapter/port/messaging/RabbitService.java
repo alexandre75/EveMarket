@@ -51,7 +51,6 @@ public class RabbitService extends AbstractService {
         Collection<Trade> trades = shipmtService.optimizeCargo(spec);
 
         byte[] tradeBytes = serialize(trades);
-
         channel.queueDeclare(delivery.getProperties().getReplyTo(), true, false, false, null);
         BasicProperties props = getProperties(delivery);
         logger.info(delivery.getProperties().getReplyTo() + " replying...");
@@ -67,6 +66,9 @@ public class RabbitService extends AbstractService {
       }
     } catch(IOException e) {
       logger.log(Level.SEVERE, "Could not process : ", e);
+    } catch(Exception e) {
+      logger.log(Level.SEVERE, e.getMessage(), e);
+      throw e;
     }
   }
 
@@ -95,7 +97,7 @@ public class RabbitService extends AbstractService {
 
         //channel.basicQos(1);
 
-        channel.basicConsume(QUEUE_NAME, true, this::messageHandler, consummerTag -> {
+        channel.basicConsume(QUEUE_NAME, false, this::messageHandler, consummerTag -> {
         });
       } catch (IOException e) {
         throw new UncheckedIOException(e);

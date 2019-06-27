@@ -72,6 +72,7 @@ public class ShipmentService {
          .filter(Optional::isPresent)
          .map(Optional::get)
          .blockingSubscribe(trades::add);
+    logger.fine("... cargo optimized");
     return trades;
   }
 }
