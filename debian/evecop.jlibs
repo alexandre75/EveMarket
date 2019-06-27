@@ -1,0 +1,5 @@
+build/libs/EveMarket-0.0.1-SNAPSHOT.jar
+lib/javax.json-1.1.4.jar
+lib/reactive-streams-flow-adapters-1.0.2.jar
+lib/rxjava-2.2.9.jar
+lib/reactive-streams-1.0.2.jar 
