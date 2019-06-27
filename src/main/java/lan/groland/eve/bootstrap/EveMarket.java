@@ -24,7 +24,7 @@ public class EveMarket {
       }
     });
 
-    System.setProperty("java.util.logging.config.file", "logging.properties");
+    //System.setProperty("java.util.logging.config.file", "logging.properties");
 
     Injector injector = Guice.createInjector(new ConfigModule(), new RabbitModule(), new EsiEveDataModule());
     RabbitService service = injector.getInstance(RabbitService.class);
