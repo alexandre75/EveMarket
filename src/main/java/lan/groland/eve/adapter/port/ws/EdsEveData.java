@@ -1,5 +1,6 @@
 package lan.groland.eve.adapter.port.ws;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -62,10 +63,10 @@ public class EdsEveData implements EveData {
           .header("Content-Type", "application/json")
           .build();
       
-      HttpResponse<InputStream> is = client.send(request, BodyHandlers.ofInputStream());
+      HttpResponse<byte[]> is = client.send(request, BodyHandlers.ofByteArray());
       logger.fine("... done ordersAsync.");
       if (is.statusCode() == 200) {
-        return new JsonStatOrderParser(is.body());
+        return new JsonStatOrderParser(new ByteArrayInputStream(is.body()));
       } else {
         throw new IllegalStateException(orderStatsUri.toString() + ":" + is.statusCode());
       }
