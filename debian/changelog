@@ -1,3 +1,10 @@
+evecop (0.0.2) UNRELEASED; urgency=medium
+
+  * Now can configure rabbit user
+  * mongo.host configuration is now taken into account
+
+ -- Alexandre Cuenca <alex04@cuenca.me>  Thu, 27 Jun 2019 21:50:59 -0700
+
 evecop (0.0.1) unstable; urgency=medium
 
   * Initial Release.
