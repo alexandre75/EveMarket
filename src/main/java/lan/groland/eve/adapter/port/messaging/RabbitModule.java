@@ -14,10 +14,14 @@ public class RabbitModule extends AbstractModule {
 
   @Provides
   public ConnectionFactory providesCOnnectionFactory(@Named("rabbit.host") String host, 
-                                                     @Named("rabbit.port") int port) {
+                                                     @Named("rabbit.port") int port,
+                                                     @Named("rabbit.user") String username,
+                                                     @Named("rabbit.password") String password) {
     ConnectionFactory factory = new ConnectionFactory();
     factory.setHost(host);
     factory.setPort(port);
+    factory.setUsername(username);
+    factory.setPassword(password);
     return factory;
   }
   

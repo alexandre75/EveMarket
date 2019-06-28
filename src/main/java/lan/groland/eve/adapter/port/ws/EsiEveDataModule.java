@@ -32,7 +32,7 @@ public class EsiEveDataModule extends AbstractModule {
       CodecRegistry reg = CodecRegistries.fromCodecs(new ItemCodec());
       CodecRegistry pojoCodecRegistry = fromRegistries(reg, MongoClient.getDefaultCodecRegistry());
 
-      mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+      mongoClient = new MongoClient(host, MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
     }
     return mongoClient;
   }
