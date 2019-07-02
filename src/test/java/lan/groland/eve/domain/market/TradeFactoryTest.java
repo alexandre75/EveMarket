@@ -28,7 +28,7 @@ class TradeFactoryTest {
   void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     when(eveData.stationOrderStatsAsync(Station.JITA)).thenReturn(Flowable.just(new OrderStats(item, 0, 100D)));
-    subject = new TradeFactory(eveData);
+    subject = TradeFactory.create(eveData);
   }
 
   @Test

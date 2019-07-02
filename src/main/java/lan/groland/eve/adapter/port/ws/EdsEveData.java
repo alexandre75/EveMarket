@@ -52,10 +52,10 @@ public class EdsEveData implements EveData {
   @Override
   public Flowable<OrderStats> stationOrderStatsAsync(Station station) {
     URI orderStatsUri = URI.create(httpPrefix + "/regions/" +  station.getRegionId() + "/stations/" + station.getStationIds()[0] + "/book");
-    return Flowable.fromPublisher(FlowAdapters.toPublisher(ordersAsync(orderStatsUri)));
+    return Flowable.fromIterable(ordersAsync(orderStatsUri));
   }
 
-  private Publisher<OrderStats> ordersAsync(URI orderStatsUri) {
+  private List<OrderStats> ordersAsync(URI orderStatsUri) {
     logger.fine("Request ordersAsync " + orderStatsUri.toString() + "...");
     try {     
       HttpRequest request = HttpRequest.newBuilder()
@@ -63,10 +63,13 @@ public class EdsEveData implements EveData {
           .header("Content-Type", "application/json")
           .build();
       
-      HttpResponse<byte[]> is = client.send(request, BodyHandlers.ofByteArray());
+      HttpResponse<InputStream> is = client.send(request, BodyHandlers.ofInputStream());
       logger.fine("... done ordersAsync.");
       if (is.statusCode() == 200) {
-        return new JsonStatOrderParser(new ByteArrayInputStream(is.body()));
+        JsonStatOrderParser parser = new JsonStatOrderParser(is.body());
+        List<OrderStats> orderStats = parser.parse();
+        is.body().close();
+        return orderStats;
       } else {
         throw new IllegalStateException(orderStatsUri.toString() + ":" + is.statusCode());
       }
@@ -82,8 +85,7 @@ public class EdsEveData implements EveData {
   @Override
   public List<OrderStats> regionOrderStats(Region region) {
     URI orderStatsUri = URI.create(httpPrefix + "/regions/" + region.getRegionId() + "/book");
-    return Flowable.fromPublisher(FlowAdapters.toPublisher(ordersAsync(orderStatsUri)))
-                   .toList().blockingGet();
+    return ordersAsync(orderStatsUri);
   }
 
   @Override

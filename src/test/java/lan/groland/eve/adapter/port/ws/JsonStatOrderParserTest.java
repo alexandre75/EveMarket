@@ -1,19 +1,15 @@
 package lan.groland.eve.adapter.port.ws;
 
-import java.util.concurrent.Flow.Publisher;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.reactivestreams.tck.TestEnvironment;
-import org.reactivestreams.tck.flow.FlowPublisherVerification;
-
-import lan.groland.eve.adapter.port.ws.JsonStatOrderParser;
+import org.junit.jupiter.api.Test;
 import lan.groland.eve.domain.market.OrderStats;
 
-class JsonStatOrderParserTest extends FlowPublisherVerification<OrderStats> {
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
-  public JsonStatOrderParserTest() {
-    super(new TestEnvironment());
-  }
+class JsonStatOrderParserTest {
 
   private JsonStatOrderParser subject;
   
@@ -22,17 +18,10 @@ class JsonStatOrderParserTest extends FlowPublisherVerification<OrderStats> {
     subject = new JsonStatOrderParser(ClassLoader.getSystemResourceAsStream("stationBooks.json"));
   }
   
-  @Override
-  public Publisher<OrderStats> createFlowPublisher(long elements) {
-    return subject;
-  }
-
-  @Override
-  public Publisher<OrderStats> createFailedFlowPublisher() {
-    return subject;
-  }
-  
-  @Override public long maxElementsFromPublisher() {
-    return 6233;
+  @Test
+  public void shouldParse6233orders() {
+    List<OrderStats> orderStatsList = subject.parse();
+    
+    assertThat(orderStatsList.size(), equalTo(6233));
   }
 }

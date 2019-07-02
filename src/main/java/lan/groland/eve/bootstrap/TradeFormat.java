@@ -1,4 +1,4 @@
-package lan.groland.eve.application;
+package lan.groland.eve.bootstrap;
 
 import java.text.FieldPosition;
 import java.text.Format;

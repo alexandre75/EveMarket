@@ -20,11 +20,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Names;
 
 import lan.groland.eve.adapter.port.ws.EsiEveDataModule;
-import lan.groland.eve.application.TradeFormat;
-import lan.groland.eve.domain.market.ShipmentService;
-import lan.groland.eve.domain.market.ShipmentSpecification;
-import lan.groland.eve.domain.market.Station;
-import lan.groland.eve.domain.market.Trade;
+import lan.groland.eve.domain.market.*;
 
 class Config extends AbstractModule {
   @Override
@@ -45,6 +41,7 @@ public class Main {
   private static TradeFormat tradeFormat = new TradeFormat();
   
   @Inject ShipmentService shipmentService;
+  @Inject EveData eveData;
 
   public static void main(String[] args) throws IOException, InterruptedException {
     Guice.createInjector(new Config(), new EsiEveDataModule()).injectMembers(INSTANCE);
@@ -100,11 +97,9 @@ public class Main {
   }
 
   /**
-   * @param args
    * @throws SQLException 
    * @throws IOException 
-   * @throws InterruptedException 
-   * @throws ApiException 
+   * @throws InterruptedException
    */
   public Collection<Trade> main(Station station, Set<Integer> alreadyBought) throws InterruptedException {
     ShipmentSpecification spec = new ShipmentSpecification.Builder(station, cash)
@@ -112,6 +107,6 @@ public class Main {
                                                           .build();
     Gson json = new Gson();
     System.out.println(json.toJson(spec));
-    return shipmentService.optimizeCargo(spec);
+    return shipmentService.optimizeCargo(spec, TradeFactory.create(eveData));
   }
 }

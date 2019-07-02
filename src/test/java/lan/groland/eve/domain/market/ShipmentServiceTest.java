@@ -31,7 +31,7 @@ class ShipmentServiceTest {
   @BeforeEach
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    subject = new ShipmentService(eveData, itemRepo, tradeFactory);
+    subject = new ShipmentService(eveData, itemRepo);
   }
   
   @Test
@@ -43,7 +43,7 @@ class ShipmentServiceTest {
     when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs, TradeFactory.create(eveData));
     
     assertEquals(1000, trades.size());
   }
@@ -58,7 +58,7 @@ class ShipmentServiceTest {
     when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs, TradeFactory.create(eveData));
     
     assertEquals(30, trades.size());
   }
@@ -72,7 +72,7 @@ class ShipmentServiceTest {
     when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.empty());
     
-    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs, TradeFactory.create(eveData));
     
     assertEquals(0, trades.size());
   }
@@ -87,7 +87,7 @@ class ShipmentServiceTest {
                      .thenReturn(Single.error(new OrderBookEmptyException(5, Station.AMARR_STATION)));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs);
+    Collection<Trade> trades = subject.load(Flowable.fromIterable(items), specs, TradeFactory.create(eveData));
     
     assertEquals(0, trades.size());
   }
@@ -105,7 +105,7 @@ class ShipmentServiceTest {
     when(tradeFactory.trade(any(), any())).thenReturn(Single.just(mockTrade1));
     when(mockTrade1.adjust(anyDouble())).thenReturn(Optional.of(mockTrade1));
     
-    Collection<Trade> trades = subject.optimizeCargo(specs);
+    Collection<Trade> trades = subject.optimizeCargo(specs, TradeFactory.create(eveData));
     
     assertEquals(1, trades.size());
   }

@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import com.google.inject.Inject;
 
 import io.reactivex.Flowable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Shipment optimization services
@@ -39,12 +38,12 @@ public class ShipmentService {
    * @return an optimized cargo
    * @see ShipmentSpecification
    */
-  public Collection<Trade> optimizeCargo(ShipmentSpecification shipSpec) {
+  public Collection<Trade> optimizeCargo(ShipmentSpecification shipSpec, TradeFactory tradeFactory) {
     logger.info("Loading items for sale and pre filtering");
     Flowable<Item> items = eveData.stationOrderStatsAsync(Station.JITA)
         .filter(os -> os.getBid() < shipSpec.cashAvailable() / 10)
         .flatMap(os -> itemRepository.findAsync(os.getItem()));
-    return load(items, shipSpec);
+    return load(items, shipSpec, tradeFactory);
   }
   
   /**
@@ -59,9 +58,8 @@ public class ShipmentService {
    * @return an optimized cargo
    * @see ShipmentSpecification
    */
-  public Collection<Trade> load(Flowable<Item> items, ShipmentSpecification shipSpec) {
+  public Collection<Trade> load(Flowable<Item> items, ShipmentSpecification shipSpec, TradeFactory tradeFactory) {
     logger.info("Optimizing the cargo");
-    TradeFactory tradeFactory = TradeFactory.create(eveData);
 
     Cargo trades = new Cargo(shipSpec);
     items.filter(shipSpec::isSatisfiedBy)

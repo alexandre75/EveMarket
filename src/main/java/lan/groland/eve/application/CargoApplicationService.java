@@ -5,18 +5,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.inject.Inject;
-import lan.groland.eve.domain.market.ShipmentService;
-import lan.groland.eve.domain.market.ShipmentSpecification;
-import lan.groland.eve.domain.market.Trade;
+import lan.groland.eve.domain.market.*;
 
 public class CargoApplicationService {
   private static Logger logger = Logger.getLogger("lan.groland.eve.application");
 
   private ShipmentService service;
+  private EveData eveData;
 
   @Inject
-  CargoApplicationService(ShipmentService service) {
+  CargoApplicationService(ShipmentService service, EveData eveData) {
     this.service = service;
+    this.eveData = eveData;
   }
 
   /**
@@ -33,7 +33,7 @@ public class CargoApplicationService {
   public Collection<Trade> optimizeCargo(ShipmentSpecification spec) {
 
     try {
-      return service.optimizeCargo(spec);
+      return service.optimizeCargo(spec, TradeFactory.create(eveData));
     } catch(Throwable e) {
       logger.log(Level.SEVERE, spec.toString(), e);
       throw e;
