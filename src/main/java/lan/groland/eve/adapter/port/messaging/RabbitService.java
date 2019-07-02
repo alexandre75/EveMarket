@@ -44,14 +44,8 @@ public class RabbitService extends AbstractService {
             + delivery.getProperties().getReplyTo());
     logger.fine(() -> new String(delivery.getBody()));
     try {
-      Gson gson = new Gson();
       try {
-        if (delivery.getProperties().getReplyTo() == null || delivery.getProperties().getMessageId() == null) {
-          throw new IllegalArgumentException("Missing reply properties");
-        }
-
-        ShipmentSpecification spec = gson.fromJson(new String(delivery.getBody(), StandardCharsets.UTF_8),
-                                                   ShipmentSpecification.class);
+        ShipmentSpecification spec = deserialize(delivery);
         Collection<Trade> trades = shipmtService.optimizeCargo(spec);
 
         byte[] tradeBytes = serialize(trades);
@@ -77,6 +71,15 @@ public class RabbitService extends AbstractService {
       logger.log(Level.SEVERE, e.getMessage(), e);
       throw e;
     }
+  }
+
+  private ShipmentSpecification deserialize(Delivery delivery) throws IllegalArgumentException {
+    if (delivery.getProperties().getReplyTo() == null || delivery.getProperties().getMessageId() == null) {
+      throw new IllegalArgumentException("Missing reply properties");
+    }
+    Gson gson = new Gson();
+    return gson.fromJson(new String(delivery.getBody(), StandardCharsets.UTF_8),
+                                               ShipmentSpecification.class);
   }
 
   private static BasicProperties getProperties(Delivery delivery) {
