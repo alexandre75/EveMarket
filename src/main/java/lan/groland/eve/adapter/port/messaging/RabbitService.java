@@ -46,6 +46,10 @@ public class RabbitService extends AbstractService {
     try {
       Gson gson = new Gson();
       try {
+        if (delivery.getProperties().getReplyTo() == null || delivery.getProperties().getMessageId() == null) {
+          throw new IllegalArgumentException("Missing reply properties");
+        }
+
         ShipmentSpecification spec = gson.fromJson(new String(delivery.getBody(), StandardCharsets.UTF_8),
                                                    ShipmentSpecification.class);
         Collection<Trade> trades = shipmtService.optimizeCargo(spec);
@@ -60,8 +64,9 @@ public class RabbitService extends AbstractService {
 
         channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
       } catch(JsonSyntaxException | IOException | IllegalArgumentException e) {
-        // TODO move to invalid queue?
-        logger.log(Level.SEVERE, delivery.getProperties().getMessageId(), e);
+        channel.queueDeclare("cargo.invalid", false, false, false, null);
+        channel.basicPublish("", "cargo.invalid", delivery.getProperties(), delivery.getBody());
+        logger.warning(e.getMessage());
         channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
       } catch(Exception e) {
         channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);
