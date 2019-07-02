@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import com.google.inject.Inject;
 
 import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Shipment optimization services
@@ -63,7 +64,7 @@ public class ShipmentService {
 
     Cargo trades = new Cargo(shipSpec);
     items.filter(shipSpec::isSatisfiedBy)
-         .flatMap(item -> tradeFactory.trade(item, shipSpec).toFlowable()
+         .flatMap(item -> tradeFactory.trade(item, shipSpec).subscribeOn(Schedulers.io()).toFlowable()
                                       .onExceptionResumeNext(Flowable.empty()))
          .filter(shipSpec::isSatisfiedByTrade)
          .map(trade -> trade.adjust(shipSpec.cashAvailable() / (double) shipSpec.tradingSlots()))
